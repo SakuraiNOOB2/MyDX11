@@ -20,3 +20,89 @@ Keyboard::Event Keyboard::ReadKey() noexcept {
 
 }
 
+bool Keyboard::KeyIsEmpty() const noexcept {
+
+	return keybuffer.empty();
+}
+
+char Keyboard::ReadChar() noexcept {
+
+	if (charbuffer.size() > 0u) {
+
+		unsigned char charcode = charbuffer.front();
+		charbuffer.pop();
+
+		return charcode;
+	}
+	else {
+
+		return 0;
+	}
+}
+
+bool Keyboard::CharIsEmpty() const noexcept {
+
+	return charbuffer.empty();
+}
+
+bool Keyboard::FlushKey() noexcept {
+
+	keybuffer = std::queue<Event>();
+}
+
+void Keyboard::FlushChar() noexcept {
+
+	charbuffer = std::queue<char>();
+}
+
+void Keyboard::EnableAutorepeat() noexcept {
+
+	autorepeatEnabled = true;
+}
+
+void Keyboard::DisableAutorepeat() noexcept {
+
+	autorepeatEnabled = false;
+}
+
+bool Keyboard::AutorepeatIsEnabled() const noexcept {
+
+	return autorepeatEnabled;
+}
+
+
+//private side
+//Window class use them
+void Keyboard::OnKeyPressed(unsigned char keycode) noexcept {
+
+	keystates[keycode] = true;
+	keybuffer.push(Keyboard::Event(Keyboard::Event::Type::Press, keycode));
+	TrimBuffer(keybuffer);
+}
+
+void Keyboard::OnKeyReleased(unsigned char keycode) noexcept {
+
+	keystates[keycode] = false;
+	keybuffer.push(Keyboard::Event(Keyboard::Event::Type::Release, keycode));
+	TrimBuffer(keybuffer);
+}
+
+void Keyboard::OnChar(char character) noexcept {
+
+	charbuffer.push(character);
+	TrimBuffer(charbuffer);
+}
+
+void Keyboard::ClearState() noexcept {
+
+	keystates.reset();
+}
+
+template<typename T>
+void Keyboard::TrimBuffer(std::queue<T>& buffer) noexcept {
+
+	while (buffer.size() > bufferSize) {
+
+		buffer.pop();
+	}
+}
