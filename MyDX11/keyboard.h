@@ -72,7 +72,7 @@ public:
 	//autorepeat control
 	void EnableAutorepeat() noexcept;
 	void DisableAutorepeat() noexcept;
-	void AutorepeatIsEnabled() const noexcept;
+	bool AutorepeatIsEnabled() const noexcept;
 
 private:
 

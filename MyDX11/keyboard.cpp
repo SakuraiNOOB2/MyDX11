@@ -45,7 +45,7 @@ bool Keyboard::CharIsEmpty() const noexcept {
 	return charbuffer.empty();
 }
 
-bool Keyboard::FlushKey() noexcept {
+void Keyboard::FlushKey() noexcept {
 
 	keybuffer = std::queue<Event>();
 }
