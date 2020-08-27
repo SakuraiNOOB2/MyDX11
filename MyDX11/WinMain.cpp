@@ -21,9 +21,9 @@ int CALLBACK WinMain(
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 
-			if (wnd.kbd.KeyIsPressed(VK_SPACE)) {
+			if (wnd.kbd.KeyIsPressed(VK_MENU)) {
 
-				MessageBox(nullptr, "Hi Nigga", "Space Key Was Pressed", MB_OK | MB_ICONEXCLAMATION);
+				MessageBox(nullptr, "Hi Nigga", "ALT Key Was Pressed", MB_OK | MB_ICONEXCLAMATION);
 			}
 		}
 

@@ -135,6 +135,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="keyboard.cpp" />
+    <ClCompile Include="mouse.cpp" />
     <ClCompile Include="myException.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="WindowsMessageMap.cpp" />
@@ -142,6 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="keyboard.h" />
+    <ClInclude Include="mouse.h" />
     <ClInclude Include="myException.h" />
     <ClInclude Include="myWin.h" />
     <ClInclude Include="resource.h" />
