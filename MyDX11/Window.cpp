@@ -185,6 +185,40 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 	case WM_MOUSEMOVE:
 	{
 		const POINTS pt = MAKEPOINTS(lParam);
+
+		//in client region -> log move, and log enter + capture mouse (if not 
+		if (pt.x >= 0 && pt.x < width&&pt.y >= 0 && pt.y < height) {
+			
+			mouse.OnMouseMove(pt.x, pt.y);
+
+			// the mouse isnt in the client window
+			if (!mouse.IsInWindow()) {
+
+				//capture the mouse even the mouse leaves the window
+				SetCapture(hWnd);
+
+				//tell the mouse component enter the window
+				mouse.OnMouseEnter();
+			}
+		}
+		// not in client -> log move / maintain capture if button down
+		else {
+
+			//check the left button or right button is currently down
+			//even outside the region
+			//could have also used LeftIsPressed() etc. instead of wParam
+			if (wParam&(MK_LBUTTON | MK_RBUTTON)) {
+
+				mouse.OnMouseMove(pt.x, pt.y);
+			}
+			// button up -> release capture / log event for leaving
+			else {
+
+				ReleaseCapture();
+				mouse.OnMouseLeave();
+			}
+		}
+
 		mouse.OnMouseMove(pt.x, pt.y);
 		break;
 	}
