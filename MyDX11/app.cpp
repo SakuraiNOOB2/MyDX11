@@ -1,4 +1,6 @@
 #include "app.h"
+#include <sstream>
+#include <iomanip>
 
 #define windowLenth (1024)
 #define windowWidth (768)
@@ -11,29 +13,22 @@ App::App()
 
 int App::Go() {
 
-	MSG msg;
-	BOOL gResult;
+	while (true) {
 
-	while ((gResult = GetMessage(&msg, nullptr, 0, 0)) > 0) {
+		//Process all messages pending,but to not block for new messages
+		if (const auto ecode = Window::ProcessMessages()) {
 
-		//TranslateMessage will post auxilliary WM_ messages from key msgs
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-
+			//if return optional has value, means we're quitting so return exit code
+			return *ecode;
+		}
 		DoFrame();
 	}
-
-	//check if GetMessage call itself borked
-	if (gResult == -1) {
-
-		throw CHWND_LAST_EXCEPT();
-	}
-
-	//wParam here is the value passed to PostQuitMessage
-	return msg.wParam;
 }
 
 void App::DoFrame() {
 
-
-}
+	const float t = timer.Peek();
+	std::ostringstream oss;
+	oss << "Time elapsed: " << std::setprecision(1) << std::fixed << t << "s";
+	wnd.SetTitle(oss.str());
+} 
