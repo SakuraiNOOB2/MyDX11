@@ -54,7 +54,7 @@ Window::Window(int width, int height, const char* name){
 	wr.top = 100;
 	wr.bottom = height + wr.top;
 	
-	if (FAILED(AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE))) {
+	if (AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE)==0) {
 
 		throw CHWND_LAST_EXCEPT();
 	}
@@ -89,6 +89,14 @@ Window::~Window() {
 	DestroyWindow(hWnd);
 }
 
+void Window::SetTitle(const std::string& title) {
+
+	if (SetWindowText(hWnd, title.c_str()) == 0) {
+
+		throw CHWND_LAST_EXCEPT();
+	}
+	
+}
 
 //Installation: Setup pointers to instances in windows 32 side
 LRESULT WINAPI Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
@@ -142,16 +150,16 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 		PostQuitMessage(0);
 		return 0;
 
-	//clear keystate when window loses focus to prevent input getting focus
+		//clear keystate when window loses focus to prevent input getting focus
 	case WM_KILLFOCUS:
 		kbd.ClearState();
 		break;
 
-	//********** Keyboard Messages **********//
+		//********** Keyboard Messages **********//
 
 	case WM_KEYDOWN:
 
-	//syskey commands need to be handle to track ALT key(VK_MENU)
+		//syskey commands need to be handle to track ALT key(VK_MENU)
 	case WM_SYSKEYDOWN:
 		if (!(lParam & 0x40000000) || kbd.AutorepeatIsEnabled()) {
 
@@ -167,12 +175,41 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 		kbd.OnChar(static_cast<unsigned char>(wParam));
 		break;
 
-	//********** Mouse Messages **********//
+		//********** Mouse Messages **********//
+	case WM_MOUSEMOVE:
+	{
+		POINTS pt = MAKEPOINTS(lParam);
+		mouse.OnMouseMove(pt.x, pt.y);
+	}
+	case WM_LBUTTONDOWN:
+	{
+		const POINTS pt = MAKEPOINTS(lParam);
+		mouse.OnLeftPressed(pt.x, pt.y);
+		break;
+	}
+	case WM_RBUTTONDOWN:
+	{
+		const POINTS pt = MAKEPOINTS(lParam);
+		mouse.OnRightPressed(pt.x, pt.y);
+		break;
+	}
+	case WM_MOUSEWHEEL:
+	{
+		const POINTS pt = MAKEPOINTS(lParam);
 
+		//wParam contains mouse wheel data in this suitation
+		if (GET_WHEEL_DELTA_WPARAM(wParam) > 0) {
 
+			mouse.OnWheelUp(pt.x, pt.y);
+		}
+		else if (GET_WHEEL_DELTA_WPARAM(wParam) < 0) {
 
+			mouse.OnWheelDown(pt.x, pt.y);
+		}
+		break;
 	}
 
+	}
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 

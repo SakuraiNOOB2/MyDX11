@@ -9,6 +9,7 @@ public:
 
 	class Event {
 
+	public:
 		enum class Type {
 
 			LPress,
@@ -106,7 +107,16 @@ private:
 	void OnLeftReleased(int x, int y) noexcept;
 	void OnRightPressed(int x, int y) noexcept;
 	void OnRightReleased(int x, int y) noexcept;
+	void OnWheelUp(int x, int y) noexcept;
+	void OnWheelDown(int x, int y) noexcept;
+	void TrimBuffer() noexcept;
 
+private:
 	static constexpr unsigned int bufferSize = 16u;
-	
+	int x;
+	int y;
+	bool leftIsPressed = false;
+	bool rightIsPressed = false;
+	std::queue<Event> buffer;
+
 };
