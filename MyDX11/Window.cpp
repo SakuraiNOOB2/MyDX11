@@ -45,8 +45,14 @@ HINSTANCE Window::WindowClass::GetInstance() noexcept {
 }
 
 //Window Stuff
-Window::Window(int width, int height, const char* name){
 
+//constructor
+//width and height should be stored into class
+Window::Window(int width, int height, const char* name)
+	:
+	width(width),
+	height(height)
+{
 	//calculate window size based on desired client region size
 	RECT wr;
 	wr.left = 100;
@@ -178,8 +184,9 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 		//********** Mouse Messages **********//
 	case WM_MOUSEMOVE:
 	{
-		POINTS pt = MAKEPOINTS(lParam);
+		const POINTS pt = MAKEPOINTS(lParam);
 		mouse.OnMouseMove(pt.x, pt.y);
+		break;
 	}
 	case WM_LBUTTONDOWN:
 	{
