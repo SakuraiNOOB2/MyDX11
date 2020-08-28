@@ -1,7 +1,5 @@
-#include "Window.h"
+#include "app.h"
 
-#define windowLenth (1024)
-#define windowWidth (768)
 
 
 int CALLBACK WinMain(
@@ -11,27 +9,8 @@ int CALLBACK WinMain(
 	int nCmdShow) {
 
 	try {
-		Window wnd(windowLenth, windowWidth, "Age of Banana");
-
-		//message pump
-		MSG msg;
-		BOOL gResult;
-		while ((gResult = GetMessage(&msg, nullptr, 0, 0)) > 0) {
-
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-
-			//Test Area
-
-
-		}
-
-		if (gResult == -1) {
-
-			return -1;
-		}
-
-		return msg.wParam;
+		
+		return App{}.Go();
 	}
 
 	//error handling
