@@ -86,8 +86,11 @@ Window::Window(int width, int height, const char* name)
 		throw CHWND_LAST_EXCEPT();
 	}
 
-	//show window handling
+	//newly created windows start off as hidden
 	ShowWindow(hWnd, SW_SHOWDEFAULT);
+
+	//create graphics object
+	pGfx = std::make_unique<Graphics>(hWnd);
 }
 
 Window::~Window() {
@@ -125,6 +128,12 @@ std::optional<int> Window::ProcessMessages() {
 
 	//return empty optional when not quitting app
 	return {};
+}
+
+Graphics& Window::Gfx()
+{
+
+	return *pGfx;
 }
 
 //Installation: Setup pointers to instances in windows 32 side
