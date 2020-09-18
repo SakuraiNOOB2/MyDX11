@@ -136,6 +136,7 @@
   <ItemGroup>
     <ClCompile Include="app.cpp" />
     <ClCompile Include="dxerr.cpp" />
+    <ClCompile Include="dxgiInfoManager.cpp" />
     <ClCompile Include="graphics.cpp" />
     <ClCompile Include="keyboard.cpp" />
     <ClCompile Include="mouse.cpp" />
@@ -148,6 +149,7 @@
   <ItemGroup>
     <ClInclude Include="app.h" />
     <ClInclude Include="dxerr.h" />
+    <ClInclude Include="dxgiInfoManager.h" />
     <ClInclude Include="graphics.h" />
     <ClInclude Include="keyboard.h" />
     <ClInclude Include="mouse.h" />
