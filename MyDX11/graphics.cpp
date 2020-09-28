@@ -2,6 +2,9 @@
 #include "dxerr.h"
 #include <sstream>
 
+
+namespace wrl = Microsoft::WRL;
+
 #pragma comment(lib,"d3d11.lib")
 
 //grahpics exception checking/throwing macros (some with dxgi infos)
@@ -85,38 +88,13 @@ Graphics::Graphics(HWND hWnd) {
 	));
 
 	//gain access to teture subresource in swap chain (back buffer)
-	ID3D11Resource* pBackBuffer = nullptr;
-	GFX_THROW_INFO(pSwap->GetBuffer(0, __uuidof(ID3D11Resource), reinterpret_cast<void**>(&pBackBuffer)));
+	wrl::ComPtr<ID3D11Resource> pBackBuffer = nullptr;
+	GFX_THROW_INFO(pSwap->GetBuffer(0, __uuidof(ID3D11Resource), &pBackBuffer));
 	GFX_THROW_INFO(pDevice->CreateRenderTargetView(
-		pBackBuffer,
+		pBackBuffer.Get(),
 		nullptr,
 		&pTarget
 	));
-
-	pBackBuffer->Release();
-}
-
-Graphics::~Graphics()
-{
-	if (pTarget != nullptr) {
-
-		pTarget->Release();
-	}
-
-	if (pContext != nullptr) {
-
-		pContext->Release();
-	}
-
-	if (pSwap != nullptr) {
-
-		pSwap->Release();
-	}
-
-	if (pDevice != nullptr) {
-
-		pDevice->Release();
-	}
 
 
 }

@@ -6,7 +6,7 @@
 
 #pragma comment(lib,"dxguid.lib")
 
-#define GFX_THROW_NOINFO(hrcall) if( FAILED( hr = (hrcall) ) ) throw Graphics::HrException( __LINE__,__FILE__,hr )
+#define GFX_THROW_NOINFO(hrcall) if( FAILED( hr = (hrcall) ) ) throw Graphics::HrException( __LINE__,__FILE__,hr)
 
 DxgiInfoManager::DxgiInfoManager()
 {
@@ -33,14 +33,6 @@ DxgiInfoManager::DxgiInfoManager()
 
 	HRESULT hr;
 	GFX_THROW_NOINFO(DxgiGetDebugInterface(__uuidof(IDXGIInfoQueue), &pDxgiInfoQueue));
-}
-
-DxgiInfoManager::~DxgiInfoManager()
-{
-	if (pDxgiInfoQueue != nullptr) {
-
-		pDxgiInfoQueue->Release();
-	}
 
 }
 

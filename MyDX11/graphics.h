@@ -3,6 +3,7 @@
 #include "myWin.h"
 #include "myException.h"
 #include <d3d11.h>
+#include <wrl.h>
 #include <vector>
 #include "dxgiInfoManager.h"
 
@@ -24,7 +25,7 @@ public:
 
 	public:
 
-		HrException(int line, const char* file, HRESULT hr,std::vector<std::string> infoMsgs) noexcept;
+		HrException(int line, const char* file, HRESULT hr, std::vector<std::string> infoMsgs={}) noexcept;
 		const char* what() const noexcept override;
 		const char* GetType() const noexcept override;
 		HRESULT GetErrorCode() const noexcept;
@@ -55,13 +56,13 @@ public:
 	Graphics(HWND hWnd);
 	Graphics(const Graphics&) = delete;
 	Graphics& operator=(const Graphics&) = delete;
-	~Graphics();
+	~Graphics() = default;
 
 	void EndFrame();
 	void ClearBuffer(float red, float green, float blue) noexcept {
 
 		const float color[] = { red,green,blue,1.0f };
-		pContext->ClearRenderTargetView(pTarget, color);
+		pContext->ClearRenderTargetView(pTarget.Get(), color);
 
 	}
 private:
@@ -71,8 +72,8 @@ private:
 #endif // ! NDEBUG
 
 
-	ID3D11Device* pDevice = nullptr;
-	IDXGISwapChain* pSwap = nullptr;
-	ID3D11DeviceContext* pContext = nullptr;
-	ID3D11RenderTargetView* pTarget = nullptr;
+	Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
+	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwap;
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pContext;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTarget;
 };
