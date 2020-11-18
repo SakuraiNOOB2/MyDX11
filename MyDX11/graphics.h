@@ -77,7 +77,7 @@ public:
 
 		const float color[] = { red,green,blue,1.0f };
 		pContext->ClearRenderTargetView(pTarget.Get(), color);
-
+		pContext->ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 	}
 
 	void DrawTestTriangle(float angle,float x,float z);
@@ -93,4 +93,5 @@ private:
 	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwap;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pContext;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTarget;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDSV;
 };

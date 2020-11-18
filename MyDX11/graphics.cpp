@@ -4,8 +4,10 @@
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
 
-namespace wrl = Microsoft::WRL;
-namespace dx = DirectX;
+
+//custom short form for shorter coding
+namespace wrl = Microsoft::WRL;		//ComPtr custom short form
+namespace dx = DirectX;				//DirectX custom short form
 
 #pragma comment(lib,"d3d11.lib")
 #pragma comment(lib,"D3DCompiler.lib")
@@ -100,7 +102,47 @@ Graphics::Graphics(HWND hWnd) {
 		&pTarget
 	));
 
+	//create depth stencil  buffer
+	D3D11_DEPTH_STENCIL_DESC dsDesc = {};
+	dsDesc.DepthEnable = TRUE;
+	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
 
+	//create depth stencil state pointer with ComPtr
+	wrl::ComPtr<ID3D11DepthStencilState> pDSState;
+	GFX_THROW_INFO(pDevice->CreateDepthStencilState(&dsDesc, &pDSState));
+
+	//bind depth state
+	pContext->OMSetDepthStencilState(pDSState.Get(), 1u);
+
+	//create depth stencil texture
+	wrl::ComPtr<ID3D11Texture2D> pDepthStencil;
+	D3D11_TEXTURE2D_DESC descDepth = {};
+	descDepth.Width = 1024u;
+	descDepth.Height = 768u;
+	descDepth.MipLevels = 1u;
+	descDepth.ArraySize = 1u;
+	descDepth.Format = DXGI_FORMAT_D32_FLOAT;	//D32 is a special format for depth in 32bit
+	
+	//sample describtor for anti-analising processing
+	descDepth.SampleDesc.Count = 1u;		//
+	descDepth.SampleDesc.Quality = 0u;		//
+
+	descDepth.Usage = D3D11_USAGE_DEFAULT;
+	descDepth.BindFlags = D3D10_BIND_DEPTH_STENCIL;
+
+	GFX_THROW_INFO(pDevice->CreateTexture2D(&descDepth, nullptr, &pDepthStencil));
+
+	//create view of depth stencil texture
+	D3D11_DEPTH_STENCIL_VIEW_DESC descDSV = {};
+	descDSV.Format = DXGI_FORMAT_D32_FLOAT;
+	descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	descDSV.Texture2D.MipSlice = 0u;
+
+	GFX_THROW_INFO(pDevice->CreateDepthStencilView(pDepthStencil.Get(), &descDSV, &pDSV));
+
+	//bind stencil view to OM
+	pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), pDSV.Get());
 }
 
 void Graphics::EndFrame()
@@ -331,9 +373,6 @@ void Graphics::DrawTestTriangle(float angle,float x,float z) {
 
 	//Bind input layout
 	pContext->IASetInputLayout(pInputLayout.Get());
-
-	//Bind render target
-	pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), nullptr);
 
 	//Set primitive topology to triangle list (groups of 3 vertices)
 	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
