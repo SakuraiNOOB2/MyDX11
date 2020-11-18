@@ -154,6 +154,7 @@
     <ClInclude Include="dxerr.h" />
     <ClInclude Include="dxgiInfoManager.h" />
     <ClInclude Include="graphics.h" />
+    <ClInclude Include="GraphicsThrowMacros.h" />
     <ClInclude Include="keyboard.h" />
     <ClInclude Include="mouse.h" />
     <ClInclude Include="myException.h" />
@@ -162,6 +163,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="WindowsMessageMap.h" />
+    <ClInclude Include="WindowsThrowMacros.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MyDX11.rc" />
