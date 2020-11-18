@@ -80,7 +80,7 @@ public:
 
 	}
 
-	void DrawTestTriangle(float angle,float x,float y);
+	void DrawTestTriangle(float angle,float x,float z);
 
 private:
 
