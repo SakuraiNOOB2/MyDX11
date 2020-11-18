@@ -2,9 +2,10 @@
 #include "dxerr.h"
 #include <sstream>
 #include <d3dcompiler.h>
-
+#include <DirectXMath.h>
 
 namespace wrl = Microsoft::WRL;
+namespace dx = DirectX;
 
 #pragma comment(lib,"d3d11.lib")
 #pragma comment(lib,"D3DCompiler.lib")
@@ -132,9 +133,8 @@ void Graphics::EndFrame()
 
 }
 
-void Graphics::DrawTestTriangle(float angle) {
+void Graphics::DrawTestTriangle(float angle,float x,float y) {
 
-	namespace wrl = Microsoft::WRL;
 	HRESULT hr;
 
 	struct Vertex {
@@ -222,11 +222,7 @@ void Graphics::DrawTestTriangle(float angle) {
 	//create constant buffer
 	struct ConstantBuffer {
 		
-		struct {
-
-			float element[4][4];
-
-		}transformation;
+		dx::XMMATRIX transform;
 
 	};
 
@@ -234,10 +230,12 @@ void Graphics::DrawTestTriangle(float angle) {
 
 		//rotation matrix around Z
 		{
-		(3.0f/4.0f)*std::cos(angle),std::sin(angle),0.0f,0.0f,
-		(3.0f / 4.0f) * -std::sin(angle),std::cos(angle),0.0f,0.0f,
-		0.0f,0.0f,1.0f,0.0f,
-		0.0f,0.0f,0.0f,1.0f,
+			//Transpose the martix to row major matrix before sending to vertex shader
+			dx::XMMatrixTranspose(
+				dx::XMMatrixRotationZ(angle) *
+				dx::XMMatrixScaling(3.0f / 4.0f,1.0f,1.0f) *
+				dx::XMMatrixTranslation(x,y,0.0f)
+			)
 		}
 	};
 
