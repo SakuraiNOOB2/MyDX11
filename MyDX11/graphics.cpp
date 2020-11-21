@@ -115,7 +115,7 @@ Graphics::Graphics(HWND hWnd) {
 	descDepth.SampleDesc.Quality = 0u;		//
 
 	descDepth.Usage = D3D11_USAGE_DEFAULT;
-	descDepth.BindFlags = D3D10_BIND_DEPTH_STENCIL;
+	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 
 	GFX_THROW_INFO(pDevice->CreateTexture2D(&descDepth, nullptr, &pDepthStencil));
 

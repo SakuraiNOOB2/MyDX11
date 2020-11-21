@@ -30,7 +30,7 @@ void Drawable::AddIndexBuffer(std::unique_ptr<IndexBuffer> ibuf) noexcept
 {
 
 	//
-	assert("Attempting to add index buffer a sdecond time" && pIndexBuffer == nullptr);
+	assert("Attempting to add index buffer a second time" && pIndexBuffer == nullptr);
 
 	pIndexBuffer = ibuf.get();
 	binds.push_back(std::move(ibuf));

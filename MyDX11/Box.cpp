@@ -34,14 +34,14 @@ Box::Box(Graphics& gfx,
 
 	const std::vector<Vertex> vertices = {
 
-		{-1.0f,-1.0f,-1.0f},
-		{1.0f,-1.0f,-1.0f},
-		{-1.0f,1.0f,-1.0f},
-		{1.0f,1.0f,-1.0f},
-		{-1.0f,-1.0f,1.0f},
-		{1.0f,-1.0f,1.0f},
-		{-1.0f,1.0f,1.0f},
-		{1.0f,1.0f,1.0f}
+		{ -1.0f,-1.0f,-1.0f },
+		{ 1.0f,-1.0f,-1.0f },
+		{ -1.0f,1.0f,-1.0f },
+		{ 1.0f,1.0f,-1.0f },
+		{ -1.0f,-1.0f,1.0f },
+		{ 1.0f,-1.0f,1.0f },
+		{ -1.0f,1.0f,1.0f },
+		{ 1.0f,1.0f,1.0f },
 
 	};
 
@@ -86,12 +86,12 @@ Box::Box(Graphics& gfx,
 	const ConstantBuffer2 cb2 = {
 
 		{
-			{1.0f,0.0f,1.0f},
-			{1.0f,0.0f,0.0f},
-			{0.0f,1.0f,0.0f},
-			{0.0f,0.0f,1.0f},
-			{1.0f,1.0f,0.0f},
-			{0.0f,1.0f,1.0f}
+			{ 1.0f,0.0f,1.0f },
+			{ 1.0f,0.0f,0.0f },
+			{ 0.0f,1.0f,0.0f },
+			{ 0.0f,0.0f,1.0f },
+			{ 1.0f,1.0f,0.0f },
+			{ 0.0f,1.0f,1.0f },
 		}
 	};
 
@@ -101,7 +101,7 @@ Box::Box(Graphics& gfx,
 	//Create Input Layout
 	const std::vector<D3D11_INPUT_ELEMENT_DESC> ied = {
 
-		{"Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0}
+		{ "Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0 },
 	};
 
 	//Bind Input Layout to the pipeline
@@ -129,8 +129,8 @@ Box::Box(Graphics& gfx,
 
 	DirectX::XMMATRIX Box::GetTransformXM() const noexcept
 	{
-		return DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
-			DirectX::XMMatrixTranslation(r, 0.0f, 0.0f) *
-			DirectX::XMMatrixRotationRollPitchYaw(theta, phi, chi) *
-			DirectX::XMMatrixTranslation(0.0f, 0.0f, 20.0f);
+		return	DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
+				DirectX::XMMatrixTranslation(r, 0.0f, 0.0f) *
+				DirectX::XMMatrixRotationRollPitchYaw(theta, phi, chi) *
+				DirectX::XMMatrixTranslation(0.0f, 0.0f, 20.0f);
 	}

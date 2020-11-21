@@ -1,5 +1,5 @@
 #pragma once
-#include "graphics.h"
+
 #include "Bindable.h"
 
 class IndexBuffer:public Bindable{

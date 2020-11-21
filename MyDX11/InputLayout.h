@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Bindable.h"
-#include "GraphicsThrowMacros.h"
+
 
 class InputLayout :public Bindable {
 
