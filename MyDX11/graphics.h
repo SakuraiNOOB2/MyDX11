@@ -6,8 +6,14 @@
 #include <wrl.h>
 #include <vector>
 #include "dxgiInfoManager.h"
+#include <d3dcompiler.h>
+#include <DirectXMath.h>
+#include <memory>
+#include <random>
 
 class Graphics {
+
+	friend class Bindable;
 
 public:
 
@@ -73,16 +79,15 @@ public:
 	~Graphics() = default;
 
 	void EndFrame();
-	void ClearBuffer(float red, float green, float blue) noexcept {
+	void ClearBuffer(float red, float green, float blue) noexcept;
 
-		const float color[] = { red,green,blue,1.0f };
-		pContext->ClearRenderTargetView(pTarget.Get(), color);
-		pContext->ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
-	}
-
-	void DrawTestTriangle(float angle,float x,float z);
+	void DrawIndexed(UINT count) noexcept(!IS_DEBUG);
+	void SetProjection(DirectX::FXMMATRIX proj) noexcept;
+	DirectX::XMMATRIX GetProjection() const noexcept;
 
 private:
+
+	DirectX::XMMATRIX projection;
 
 #ifndef  NDEBUG
 	DxgiInfoManager infoManager;

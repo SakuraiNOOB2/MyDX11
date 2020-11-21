@@ -5,9 +5,15 @@
 class App {
 
 public:
+
+	//Constructor
 	App();
+	
 	//master frame / message loop
 	int Go();
+
+	//Destructor
+	~App();
 
 private:
 	void DoFrame();
@@ -15,4 +21,7 @@ private:
 private:
 	Window wnd;
 	myTimer timer;
+
+	//Drawable Box
+	std::vector<std::unique_ptr<class Box>> boxes;
 };

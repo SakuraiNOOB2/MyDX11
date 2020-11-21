@@ -1,6 +1,8 @@
 #pragma once
 
 
+// HRESULT hr should exist in the local scope for these macros to work
+
 //grahpics exception checking/throwing macros (some with dxgi infos)
 #define GFX_EXCEPT_NOINFO(hr) Graphics::HrException( __LINE__,__FILE__,(hr) )
 #define GFX_THROW_NOINFO(hrcall) if( FAILED( hr = (hrcall) ) ) throw Graphics::HrException( __LINE__,__FILE__,hr )
@@ -15,4 +17,13 @@
 #define GFX_THROW_INFO(hrcall) GFX_THROW_NOINFO(hrcall)
 #define GFX_DEVICE_REMOVED_EXCEPT(hr) Graphics::DeviceRemovedException( __LINE__,__FILE__,(hr) )
 #define GFX_THROW_INFO_ONLY(call) (call)
+#endif
+
+// For importing infomanager into local scopre
+// GetinfoManager(Graphics& gfx) must exist
+
+#ifdef NDEBUG
+#define INFOMAN(gfx) HRESULT hr
+#else
+#define INFOMAN(gfx) HRESULT hr; DxgiInfoManager& infoManager = GetInfoManager((gfx))
 #endif
