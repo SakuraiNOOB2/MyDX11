@@ -1,8 +1,9 @@
 #pragma once
 
-#include "Drawable.h"
+#include "DrawableBase.h"
 
-class Box :public Drawable {
+//Drawable Base templated on Box
+class Box :public DrawableBase<Box> {
 
 public:
 

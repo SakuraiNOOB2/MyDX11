@@ -179,6 +179,9 @@
     <ClInclude Include="TransformCbuf.h">
       <Filter>ヘッダー ファイル\Bindable</Filter>
     </ClInclude>
+    <ClInclude Include="DrawableBase.h">
+      <Filter>ヘッダー ファイル\Drawable</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MyDX11.rc">

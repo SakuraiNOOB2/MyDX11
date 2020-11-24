@@ -8,6 +8,10 @@ class Bindable;
 
 class Drawable {
 
+	//Make DrawableBase a friend class of Drawable for private access
+	template<class T>
+	friend class DrawableBase;
+
 public:
 
 	//constructor
@@ -19,20 +23,24 @@ public:
 	void Draw(Graphics& gfx) const noexcept(!IS_DEBUG);
 	virtual void Update(float dt) noexcept = 0;
 
-	//Add bind
-	void AddBind(std::unique_ptr<Bindable> bind) noexcept(!IS_DEBUG);
-
-	//Add IndexBuffer
-	void AddIndexBuffer(std::unique_ptr<class IndexBuffer> ibuf) noexcept;
-
-
 	//destructor
 	virtual ~Drawable() = default;
+
+protected:
+
+	void AddBind(std::unique_ptr<Bindable> bind) noexcept(!IS_DEBUG);
+
+	void AddIndexBuffer(std::unique_ptr<class IndexBuffer> ibuf) noexcept(!IS_DEBUG);
+
+private:
+
+	//Bridge for Drawable class to access the staticBinds going to be declare by its children
+	virtual const std::vector<std::unique_ptr<Bindable>>& GetStaticBinds() const noexcept = 0;
 
 private:
 
 	//special pointer to the transformation constant buffer
-	const IndexBuffer* pIndexBuffer = nullptr;
+	const class IndexBuffer* pIndexBuffer = nullptr;
 	std::vector<std::unique_ptr<Bindable>> binds;
-
+	
 };

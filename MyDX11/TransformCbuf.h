@@ -14,7 +14,8 @@ public:
 
 private:
 
-	VertexConstantBuffer<DirectX::XMMATRIX> vcbuf;
+	//dynamic allocated static VertexConstantBuffer
+	static std::unique_ptr<VertexConstantBuffer<DirectX::XMMATRIX>> pVcbuf;
 	
 	//Grab the matrix from it's parent and update to vcbuf
 	const Drawable& parent;

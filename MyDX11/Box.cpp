@@ -20,97 +20,112 @@ Box::Box(Graphics& gfx,
 	theta(adist(rng)),
 	phi(adist(rng))
 {
-	//Create Vertex
-	struct Vertex {
 
-		struct {
 
-			float x;
-			float y;
-			float z;
-		}pos;
+	//check this class is statically initialized or not 
+	if (!IsStaticInitialized()) {
 
-	};
+		//**Static Initialization for the buffers
 
-	const std::vector<Vertex> vertices = {
+		//Create Vertex
+		struct Vertex {
 
-		{ -1.0f,-1.0f,-1.0f },
-		{ 1.0f,-1.0f,-1.0f },
-		{ -1.0f,1.0f,-1.0f },
-		{ 1.0f,1.0f,-1.0f },
-		{ -1.0f,-1.0f,1.0f },
-		{ 1.0f,-1.0f,1.0f },
-		{ -1.0f,1.0f,1.0f },
-		{ 1.0f,1.0f,1.0f },
+			struct {
 
-	};
+				float x;
+				float y;
+				float z;
+			}pos;
 
-	//Bind Vertex Buffer
-	AddBind(std::make_unique<VertexBuffer>(gfx, vertices));
+		};
 
-	//Bind Vertex Shader
-	auto pvs = std::make_unique<VertexShader>(gfx, L"VertexShader.cso");
-	auto pvsbc = pvs->GetByteCode();
-	AddBind(std::move(pvs));
+		const std::vector<Vertex> vertices = {
 
-	//Bind Pixel Shader
-	AddBind(std::make_unique<PixelShader>(gfx, L"PixelShader.cso"));
+			{ -1.0f,-1.0f,-1.0f },
+			{ 1.0f,-1.0f,-1.0f },
+			{ -1.0f,1.0f,-1.0f },
+			{ 1.0f,1.0f,-1.0f },
+			{ -1.0f,-1.0f,1.0f },
+			{ 1.0f,-1.0f,1.0f },
+			{ -1.0f,1.0f,1.0f },
+			{ 1.0f,1.0f,1.0f },
 
-	//Create indices
-	const std::vector<unsigned short> indices = {
+		};
 
-		0,2,1, 2,3,1,
-		1,3,5, 3,7,5,
-		2,6,3, 3,6,7,
-		4,5,7, 4,7,6,
-		0,4,2, 2,4,6,
-		0,1,4, 1,5,4
-	};
+		//Bind static Vertex Buffer
+		AddStaticBind(std::make_unique<VertexBuffer>(gfx, vertices));
 
-	//Bind Index Buffer
-	AddIndexBuffer(std::make_unique<IndexBuffer>(gfx, indices));
+		//Bind static Vertex Shader
+		auto pvs = std::make_unique<VertexShader>(gfx, L"VertexShader.cso");
+		auto pvsbc = pvs->GetByteCode();
+		AddStaticBind(std::move(pvs));
 
-	//Create Constant Buffer for face colors
-	struct ConstantBuffer2 {
+		//Bind static Pixel Shader
+		AddStaticBind(std::make_unique<PixelShader>(gfx, L"PixelShader.cso"));
 
-		struct {
+		//Create static indices
+		const std::vector<unsigned short> indices = {
 
-			float r;
-			float g;
-			float b;
-			float a;
-		}face_colors[6];
+			0,2,1, 2,3,1,
+			1,3,5, 3,7,5,
+			2,6,3, 3,6,7,
+			4,5,7, 4,7,6,
+			0,4,2, 2,4,6,
+			0,1,4, 1,5,4
+		};
 
-	};
+		//Bind static Index Buffer
+		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, indices));
 
-	const ConstantBuffer2 cb2 = {
+		//Create Constant Buffer for face colors
+		struct ConstantBuffer2 {
 
-		{
-			{ 1.0f,0.0f,1.0f },
-			{ 1.0f,0.0f,0.0f },
-			{ 0.0f,1.0f,0.0f },
-			{ 0.0f,0.0f,1.0f },
-			{ 1.0f,1.0f,0.0f },
-			{ 0.0f,1.0f,1.0f },
-		}
-	};
+			struct {
 
-	//Bind Constant Buffer
-	AddBind(std::make_unique<PixelConstantBuffer<ConstantBuffer2>>(gfx, cb2));
+				float r;
+				float g;
+				float b;
+				float a;
+			}face_colors[6];
 
-	//Create Input Layout
-	const std::vector<D3D11_INPUT_ELEMENT_DESC> ied = {
+		};
 
-		{ "Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0 },
-	};
+		const ConstantBuffer2 cb2 = {
 
-	//Bind Input Layout to the pipeline
-	AddBind(std::make_unique<InputLayout>(gfx, ied, pvsbc));
+			{
+				{ 1.0f,0.0f,1.0f },
+				{ 1.0f,0.0f,0.0f },
+				{ 0.0f,1.0f,0.0f },
+				{ 0.0f,0.0f,1.0f },
+				{ 1.0f,1.0f,0.0f },
+				{ 0.0f,1.0f,1.0f },
+			}
+		};
 
-	//Bind Topology
-	AddBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
+		//Bind static Constant Buffer for face color
+		AddStaticBind(std::make_unique<PixelConstantBuffer<ConstantBuffer2>>(gfx, cb2));
 
-	//Bind Transform Constant Buffer pipeline
+		//Create static Input Layout
+		const std::vector<D3D11_INPUT_ELEMENT_DESC> ied = {
+
+			{ "Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0 },
+		};
+
+		//Bind static Input Layout to the pipeline
+		AddStaticBind(std::make_unique<InputLayout>(gfx, ied, pvsbc));
+
+		//Bind static Topology
+		AddStaticBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
+	}
+	else {
+
+		//Set/Update indexBuffer pointer/reference to from static
+		SetIndexFromStatic();
+	}
+
+
+	//Bind not static bindable Transform Constant Buffer pipeline
+	//*** Not static bindables because every boxes has its own transform
 	AddBind(std::make_unique<TransformCbuf>(gfx, *this));
 }
 
