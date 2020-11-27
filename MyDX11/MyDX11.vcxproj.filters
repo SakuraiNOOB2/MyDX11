@@ -108,6 +108,24 @@
     <ClCompile Include="Pyramid.cpp">
       <Filter>ソース ファイル\Drawable</Filter>
     </ClCompile>
+    <ClCompile Include="Surface.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="GDIPlusManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Sheet.cpp">
+      <Filter>ソース ファイル\Drawable</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>ソース ファイル\Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="Sampler.cpp">
+      <Filter>ソース ファイル\Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="SkinnedBox.cpp">
+      <Filter>ソース ファイル\Drawable</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsMessageMap.h">
@@ -218,6 +236,24 @@
     <ClInclude Include="Pyramid.h">
       <Filter>ヘッダー ファイル\Drawable</Filter>
     </ClInclude>
+    <ClInclude Include="Surface.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GDIPlusManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Sheet.h">
+      <Filter>ヘッダー ファイル\Drawable</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>ヘッダー ファイル\Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="Sampler.h">
+      <Filter>ヘッダー ファイル\Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="SkinnedBox.h">
+      <Filter>ヘッダー ファイル\Drawable</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MyDX11.rc">
@@ -251,6 +287,12 @@
       <Filter>ヘッダー ファイル\Shader</Filter>
     </FxCompile>
     <FxCompile Include="ColorIndexVS.hlsl">
+      <Filter>ヘッダー ファイル\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="TexturePS.hlsl">
+      <Filter>ヘッダー ファイル\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="TextureVS.hlsl">
       <Filter>ヘッダー ファイル\Shader</Filter>
     </FxCompile>
   </ItemGroup>
