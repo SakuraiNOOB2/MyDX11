@@ -1,6 +1,7 @@
 #pragma once
 #include "Window.h"
 #include "myTimer.h"
+#include "imguiManager.h"
 
 class App {
 
@@ -19,6 +20,8 @@ private:
 	void DoFrame();
 
 private:
+	ImguiManager imgui;
+
 	Window wnd;
 	myTimer timer;
 

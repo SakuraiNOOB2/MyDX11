@@ -4,6 +4,7 @@
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
 #include "GraphicsThrowMacros.h"
+#include "imgui/imgui_impl_dx11.h"
 
 //custom short form for shorter coding
 namespace wrl = Microsoft::WRL;		//ComPtr custom short form
@@ -141,6 +142,8 @@ Graphics::Graphics(HWND hWnd) {
 
 	pContext->RSSetViewports(1u, &vp);
 
+	//Init imgui d3d impl
+	ImGui_ImplDX11_Init(pDevice.Get(), pContext.Get());
 
 }
 
