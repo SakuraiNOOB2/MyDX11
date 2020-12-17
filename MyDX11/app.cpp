@@ -10,9 +10,6 @@
 #include "Surface.h"
 #include "GDIPlusManager.h"
 #include "imgui/imgui.h"
-#include "imgui/imgui_impl_win32.h"
-#include "imgui/imgui_impl_dx11.h"
-
 GDIPlusManager gdipm;
 
 #define windowLenth (1024)
@@ -114,11 +111,12 @@ int App::Go() {
 
 void App::DoFrame() {
 
-	//add deltatime
-	auto dt = timer.Mark();
+	//add deltatime and * by speedFactor
+	auto dt = timer.Mark() * speedFactor;
 
 	//buffer clearing
-	wnd.Gfx().ClearBuffer(0.07f, 0.0f, 0.12f);
+	wnd.Gfx().BeginFrame(0.07f, 0.0f, 0.12f);
+	wnd.Gfx().SetCamera(m_Camera.GetMatrix());
 
 	for (auto& d:drawables) {
 
@@ -129,19 +127,25 @@ void App::DoFrame() {
 		d->Draw(wnd.Gfx());
 	}
 
-	//imgui stuff
-	ImGui_ImplDX11_NewFrame();
-	ImGui_ImplWin32_NewFrame();
-	ImGui::NewFrame();
 
-	static bool show_demo_window = true;
-	if (show_demo_window) {
+	/// <summary>
+	/// imgui stuff
+	/// </summary>
 
-		ImGui::ShowDemoWindow(&show_demo_window);
+
+	// 1st imgui window (showing simulation speed)
+	static char buffer[1024];
+	if (ImGui::Begin("Simulation Speed")) {
+
+		ImGui::SliderFloat("Speed Factor", &speedFactor, 0.0f, 4.0f);
+		ImGui::Text("%.3f ms/frame (%.1f fps)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		ImGui::Text("StatusÅF%s", wnd.kbd.KeyIsPressed(VK_SPACE) ? "Pause" : "Running(hold spacebar to pause)");
+
 	}
+	ImGui::End();
 
-	ImGui::Render();
-	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	//imgui window to control camera
+	m_Camera.SpawnControlWindow();
 
 	//present
 	wnd.Gfx().EndFrame();

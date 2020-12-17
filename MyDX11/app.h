@@ -2,6 +2,7 @@
 #include "Window.h"
 #include "myTimer.h"
 #include "imguiManager.h"
+#include "camera.h"
 
 class App {
 
@@ -24,6 +25,12 @@ private:
 
 	Window wnd;
 	myTimer timer;
+
+	//speed factor
+	float speedFactor = 1.0f;
+
+	//camera
+	Camera m_Camera;
 
 	//Drawable
 	std::vector<std::unique_ptr<class Drawable>> drawables;

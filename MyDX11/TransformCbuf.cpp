@@ -20,7 +20,7 @@ TransformCbuf::TransformCbuf(Graphics& gfx, const Drawable& parent)
 void TransformCbuf::Bind(Graphics & gfx) noexcept
 {
 	//Update the constant buffer every frame
-	pVcbuf->Update(gfx, DirectX::XMMatrixTranspose(parent.GetTransformXM() * gfx.GetProjection()));
+	pVcbuf->Update(gfx, DirectX::XMMatrixTranspose(parent.GetTransformXM() * gfx.GetCamera() * gfx.GetProjection()));
 
 	//bind the constant buffer to the graphic objects every frame
 	pVcbuf->Bind(gfx);
