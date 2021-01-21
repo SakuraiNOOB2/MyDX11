@@ -3,6 +3,7 @@
 #include "myTimer.h"
 #include "imguiManager.h"
 #include "camera.h"
+#include "PointLight.h"
 
 class App {
 
@@ -31,6 +32,9 @@ private:
 
 	//camera
 	Camera m_Camera;
+
+	//point light
+	PointLight m_light;
 
 	//Drawable
 	std::vector<std::unique_ptr<class Drawable>> drawables;

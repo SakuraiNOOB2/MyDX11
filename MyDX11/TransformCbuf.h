@@ -7,6 +7,14 @@
 
 class TransformCbuf :public Bindable {
 
+private:
+
+	struct Transforms{
+
+		DirectX::XMMATRIX modelViewProj;
+		DirectX::XMMATRIX model;
+	};
+
 public:
 
 	TransformCbuf(Graphics& gfx, const Drawable& parent);
@@ -15,7 +23,7 @@ public:
 private:
 
 	//dynamic allocated static VertexConstantBuffer
-	static std::unique_ptr<VertexConstantBuffer<DirectX::XMMATRIX>> pVcbuf;
+	static std::unique_ptr<VertexConstantBuffer<Transforms>> pVcbuf;
 	
 	//Grab the matrix from it's parent and update to vcbuf
 	const Drawable& parent;
