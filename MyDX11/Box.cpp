@@ -53,15 +53,6 @@ Box::Box(Graphics& gfx,
 		//Bind static Index Buffer
 		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, model.indices));
 
-		//Create Constant Buffer for lighting
-		struct PSLightConstants {
-			DirectX::XMVECTOR pos;
-		};
-
-
-		//Bind static Constant Buffer for face color
-		AddStaticBind(std::make_unique<PixelConstantBuffer<PSLightConstants>>(gfx));
-
 		//Create static Input Layout
 		const std::vector<D3D11_INPUT_ELEMENT_DESC> ied = {
 
