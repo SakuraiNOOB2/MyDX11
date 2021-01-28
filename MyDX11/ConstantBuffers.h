@@ -30,7 +30,10 @@ public:
 	}
 
 	//constructor with initializing constant buffer data
-	ConstantBuffer(Graphics& gfx, const C& consts) {
+	ConstantBuffer(Graphics& gfx, const C& consts,UINT slot=0u)
+	:
+	slot(slot)
+	{
 
 		//throw dxgiinfomanager to the scope
 		INFOMAN(gfx);
@@ -51,7 +54,10 @@ public:
 	}
 
 	//constructor without initializing constant buffer data
-	ConstantBuffer(Graphics& gfx) {
+	ConstantBuffer(Graphics& gfx,UINT slot=0u)
+	:
+	slot(slot)
+	{
 
 		INFOMAN(gfx);
 
@@ -71,6 +77,8 @@ protected:
 
 	//ComPtr for ConstantBuffer
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pConstantBuffer;
+
+	UINT slot;
 };
 
 //VertexConstantBuffer
@@ -83,6 +91,7 @@ private:
 	//using declaration to import the names of ConstantBuffer and Bindable class
 	//For access the protected member of the ConstantBuffer and Bindable class
 	using ConstantBuffer<C>::pConstantBuffer;
+	using ConstantBuffer<C>::slot;
 	using Bindable::GetContext;
 
 public:
@@ -92,7 +101,7 @@ public:
 	void Bind(Graphics& gfx) noexcept override {
 
 		//"this" pointer can be used if not using "using" declaration
-		GetContext(gfx)->VSSetConstantBuffers(0u, 1u, pConstantBuffer.GetAddressOf());
+		GetContext(gfx)->VSSetConstantBuffers(slot, 1u, pConstantBuffer.GetAddressOf());
 	}
 
 };
@@ -107,6 +116,7 @@ private:
 	//using declaration to import the names of ConstantBuffer and Bindable class
 	//For access the protected member of the ConstantBuffer and Bindable class
 	using ConstantBuffer<C>::pConstantBuffer;
+	using ConstantBuffer<C>::slot;
 	using Bindable::GetContext;
 
 public:
@@ -116,7 +126,7 @@ public:
 	void Bind(Graphics& gfx) noexcept override {
 
 		//"this" pointer can be used if not using "using" declaration
-		GetContext(gfx)->PSSetConstantBuffers(0u, 1u, pConstantBuffer.GetAddressOf());
+		GetContext(gfx)->PSSetConstantBuffers(slot, 1u, pConstantBuffer.GetAddressOf());
 	}
 
 };

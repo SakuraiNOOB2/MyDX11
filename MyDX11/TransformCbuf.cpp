@@ -3,7 +3,7 @@
 
 
 //Transformation Constant Buffer
-TransformCbuf::TransformCbuf(Graphics& gfx, const Drawable& parent)
+TransformCbuf::TransformCbuf(Graphics& gfx, const Drawable& parent,UINT slot)
 	:
 	parent(parent)
 {
@@ -12,7 +12,7 @@ TransformCbuf::TransformCbuf(Graphics& gfx, const Drawable& parent)
 	if (!pVcbuf) {
 
 		//Allocating the constant buffer
-		pVcbuf = std::make_unique<VertexConstantBuffer<Transforms>>(gfx);
+		pVcbuf = std::make_unique<VertexConstantBuffer<Transforms>>(gfx,slot);
 	}
 
 }

@@ -4,7 +4,6 @@ cbuffer LightCBuf
 {
     
     float3 lightPos;
-    float3 materialColor;
     float3 ambient;
     float3 diffuseColor;
     float diffuseIntensity;
@@ -13,6 +12,13 @@ cbuffer LightCBuf
     float attQuad;
 };
 
+cbuffer ObjectCBuf
+{
+    
+    float3 materialColor;
+    float specularIntensity;
+    float specularPower;
+};
 
 //taking position and normal of the pixel
 float4 main(float3 worldPos : Position, float3 n : Normal) : SV_Target
@@ -28,7 +34,21 @@ float4 main(float3 worldPos : Position, float3 n : Normal) : SV_Target
     //diffuse intensity base on dot product
     const float3 diffuse = diffuseColor * diffuseIntensity * att * max(0.0f, dot(dirToL, n));
     
+    //reflected light vector
+    const float3 w = n * dot(dirToL, n);
+    
+    const float3 r = w * 2.0f - dirToL;
+    
+    //calculate specular intensity based on angle 
+    //between viewing vector
+    //and refelction vector,
+    //narrow with power function
+    const float3 specular = 
+    (diffuseColor * diffuseIntensity) * 
+    specularIntensity * 
+    pow(max(0.0f, dot(normalize(r), normalize(worldPos))), specularPower);
+    
     //final color calculation 
-    return float4(saturate((diffuse + ambient) * materialColor), 1.0f);
+    return float4(saturate((diffuse + ambient + specular) * materialColor), 1.0f);
     
 }
