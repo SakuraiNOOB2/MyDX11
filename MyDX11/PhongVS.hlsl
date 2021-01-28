@@ -2,7 +2,7 @@
 //constant buffer
 cbuffer CBuf
 {
-    matrix model;       //model transform
+    matrix modelView;       //model view transform
     matrix modelViewProj;       //concatenated model view projection
 };
 
@@ -19,10 +19,10 @@ VSOut main(float3 pos : POSITION, float3 n : NORMAL)
     VSOut vso;
     
     //calculate the world position of the pixel
-    vso.worldPos = (float3) mul(float4(pos, 1.0f), model);
+    vso.worldPos = (float3) mul(float4(pos, 1.0f), modelView);
     
     //
-    vso.normal = mul(n, (float3x3) model);
+    vso.normal = mul(n, (float3x3) modelView);
     
     //
     vso.pos = mul(float4(pos, 1.0f), modelViewProj);
