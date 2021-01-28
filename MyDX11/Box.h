@@ -1,9 +1,9 @@
 #pragma once
 
-#include "DrawableBase.h"
+#include "TestObjects.h"
 
 //Drawable Base templated on Box
-class Box :public DrawableBase<Box> {
+class Box :public TestObject<Box> {
 
 public:
 
@@ -15,36 +15,12 @@ public:
 		std::uniform_real_distribution<float>& bdist,
 		DirectX::XMFLOAT3 material);
 
-	void Update(float dt) noexcept override;
 
 	DirectX::XMMATRIX GetTransformXM() const noexcept override;
 
 private:
 
-	//positional
-	float r;
 
-	//angles
-	float roll = 0.0f;
-	float pitch = 0.0f;
-	float yaw = 0.0f;
-
-	//*position
-	float theta;
-	float phi;
-	float chi;
-
-	//angular speed(delta/s)
-	
-	//*rotation about the box center
-	float droll;
-	float dpitch;
-	float dyaw;
-
-	//*rotation about the about the center of the world space
-	float dtheta;
-	float dphi;
-	float dchi;
 
 	//model transform
 	DirectX::XMFLOAT3X3 mt;

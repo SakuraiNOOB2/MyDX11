@@ -43,10 +43,12 @@ float4 main(float3 worldPos : Position, float3 n : Normal) : SV_Target
     //between viewing vector
     //and refelction vector,
     //narrow with power function
-    const float3 specular = 
-    (diffuseColor * diffuseIntensity) * 
-    specularIntensity * 
-    pow(max(0.0f, dot(normalize(-r), normalize(worldPos))), specularPower);
+    const float3 specular = att *
+    (diffuseColor * diffuseIntensity) *
+    specularIntensity *
+    pow(max(0.0f, 
+    dot(normalize(-r), normalize(worldPos))), 
+    specularPower);
     
     //final color calculation 
     return float4(saturate((diffuse + ambient + specular) * materialColor), 1.0f);

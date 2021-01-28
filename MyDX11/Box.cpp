@@ -12,16 +12,13 @@ Box::Box(Graphics& gfx,
 	std::uniform_real_distribution<float>& bdist,
 	DirectX::XMFLOAT3 material)
 	:
-	r(rdist(rng)),
-	droll(ddist(rng)),
-	dpitch(ddist(rng)),
-	dyaw(ddist(rng)),
-	dphi(odist(rng)),
-	dtheta(odist(rng)),
-	dchi(odist(rng)),
-	chi(adist(rng)),
-	theta(adist(rng)),
-	phi(adist(rng))
+	TestObject(
+		gfx,
+		rng,
+		adist,
+		ddist,
+		odist,
+		rdist)
 {
 
 
@@ -96,23 +93,10 @@ Box::Box(Graphics& gfx,
 
 }
 
-	void Box::Update(float dt) noexcept
-	{
-		//get delta time(dt) to update the angles
-		roll += droll * dt;
-		pitch += dpitch * dt;
-		yaw += dyaw * dt;
 
-		theta += dtheta * dt;
-		phi += dphi * dt;
-		chi += dchi * dt;
 
-	}
-
-	DirectX::XMMATRIX Box::GetTransformXM() const noexcept
-	{
-		return	DirectX::XMLoadFloat3x3(&mt)*
-				DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
-				DirectX::XMMatrixTranslation(r, 0.0f, 0.0f) *
-				DirectX::XMMatrixRotationRollPitchYaw(theta, phi, chi);
-	}
+DirectX::XMMATRIX Box::GetTransformXM() const noexcept
+{
+	return	DirectX::XMLoadFloat3x3(&mt) *
+		TestObject::GetTransformXM();
+}
