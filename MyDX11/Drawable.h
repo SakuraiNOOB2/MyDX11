@@ -28,8 +28,25 @@ public:
 
 protected:
 
-	void AddBind(std::unique_ptr<Bindable> bind) noexcept(!IS_DEBUG);
+	//template for querying the bindables
+	//used for changing particular bindables
+	template<class T>
+	T* QueryBindable() noexcept {
 
+		for (auto& pb : binds) {
+
+			if (auto pt = dynamic_cast<T*>(pb.get())) {
+
+				return pt;
+			}
+
+		}
+
+		return nullptr;
+	}
+
+	//Adding Bindables and IndexBuffer
+	void AddBind(std::unique_ptr<Bindable> bind) noexcept(!IS_DEBUG);
 	void AddIndexBuffer(std::unique_ptr<class IndexBuffer> ibuf) noexcept(!IS_DEBUG);
 
 private:

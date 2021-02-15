@@ -2,6 +2,7 @@
 #include "BindableBase.h"
 #include "GraphicsThrowMacros.h"
 #include "Cube.h"
+#include "imgui/imgui.h"
 
 Box::Box(Graphics& gfx,
 	std::mt19937& rng, 
@@ -75,18 +76,9 @@ Box::Box(Graphics& gfx,
 	//*** Not static bindables because every boxes has its own transform
 	AddBind(std::make_unique<TransformCbuf>(gfx, *this));
 
-	struct PSMaterialConstant {
-
-		DirectX::XMFLOAT3 color;
-		float specularIntensity = 0.6f;
-		float specularPower = 30.0f;
-
-		float padding[3];
-	}colorConst;
-
-	colorConst.color = material;
-
-	AddBind(std::make_unique<PixelConstantBuffer<PSMaterialConstant>>(gfx, colorConst, 1u));
+	//PS material constants
+	materialConstants.color = material;
+	AddBind(std::make_unique<MaterialCbuf>(gfx, materialConstants, 1u));
 
 	//model deformation transform(per instance,not stored as bind)
 	DirectX::XMStoreFloat3x3(&mt, DirectX::XMMatrixScaling(1.0f, 1.0f, bdist(rng)));
@@ -99,4 +91,60 @@ DirectX::XMMATRIX Box::GetTransformXM() const noexcept
 {
 	return	DirectX::XMLoadFloat3x3(&mt) *
 		TestObject::GetTransformXM();
+}
+
+bool Box::SpawnControlWindow(int id, Graphics& gfx) noexcept
+{
+
+	bool isDirty = false;
+	bool isOpen = true;
+
+	//control window for ps material constants
+	if (ImGui::Begin(("Box" + std::to_string(id)).c_str(),&isOpen)) {
+
+		ImGui::Text("Material Properties");
+		//color
+		const auto cd = ImGui::ColorEdit3("Material Color", &materialConstants.color.x);
+
+		//lighting stuffs
+		const auto sid= ImGui::SliderFloat("Specular Intensity", &materialConstants.specularIntensity,0.05f,4.0f,"%.2f",2);
+		const auto spd=ImGui::SliderFloat("Specular Power", &materialConstants.specularPower, 1.0f, 200.0f, "%.2f", 2);
+
+		isDirty = cd || sid || spd;
+
+		//Transform stuffs
+		ImGui::Text("Position");
+
+		ImGui::SliderFloat("R", &r, 0.0f, 80.0f, "%.1f");
+		ImGui::SliderAngle("Theta", &theta, -180.0f, 180.0f);
+		ImGui::SliderAngle("Phi", &phi, -180.0f, 180.0f);
+		
+		ImGui::Text("Orientation");
+		ImGui::SliderAngle("Roll", &roll, -180.0f, 180.0f);
+		ImGui::SliderAngle("Pitch", &pitch, -180.0f, 180.0f);
+		ImGui::SliderAngle("Yaw", &yaw, -180.0f, 180.0f);
+
+	}
+
+	ImGui::End();
+
+	if (isDirty) {
+
+		SyncMaterial(gfx);
+
+	}
+
+	return isOpen;
+}
+
+void Box::SyncMaterial(Graphics& gfx) noexcept(!IS_DEBUG)
+{
+
+	//finding materialcbuff
+	auto pConstantPS = QueryBindable<MaterialCbuf>();
+
+	//checking pConstantPS is null pointer or not
+	assert(pConstantPS != nullptr);
+
+	pConstantPS->Update(gfx, materialConstants);
 }
