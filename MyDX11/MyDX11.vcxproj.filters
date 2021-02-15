@@ -40,6 +40,12 @@
     <Filter Include="imgui">
       <UniqueIdentifier>{a1b7b042-2bd3-40b4-bdb4-7b63dd536711}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\Model">
+      <UniqueIdentifier>{6023f334-122a-46fd-8f62-2d14bf8e01cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Model">
+      <UniqueIdentifier>{82f725da-05ff-4831-af9b-94dfb1299ca6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinMain.cpp">
@@ -155,6 +161,9 @@
     </ClCompile>
     <ClCompile Include="SkinnedBox.cpp">
       <Filter>ソース ファイル\Drawable</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>ソース ファイル\Model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -319,6 +328,9 @@
     </ClInclude>
     <ClInclude Include="SkinnedBox.h">
       <Filter>ヘッダー ファイル\Drawable</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>ヘッダー ファイル\Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

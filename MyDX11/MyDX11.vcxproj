@@ -177,6 +177,7 @@
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="InputLayout.cpp" />
     <ClCompile Include="keyboard.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="mouse.cpp" />
     <ClCompile Include="myException.cpp" />
     <ClCompile Include="myTimer.cpp" />
@@ -226,6 +227,7 @@
     <ClInclude Include="IndexedTriangleList.h" />
     <ClInclude Include="InputLayout.h" />
     <ClInclude Include="keyboard.h" />
+    <ClInclude Include="Model.h" />
     <ClInclude Include="mouse.h" />
     <ClInclude Include="myException.h" />
     <ClInclude Include="myMath.h" />

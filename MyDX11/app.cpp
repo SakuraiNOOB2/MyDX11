@@ -3,12 +3,21 @@
 #include "Cylinder.h"
 #include "Pyramid.h"
 #include "SkinnedBox.h"
+#include "Model.h"
 #include <memory>
 #include <algorithm>
 #include "myMath.h"
 #include "Surface.h"
 #include "GDIPlusManager.h"
 #include "imgui/imgui.h"
+
+//assimp loading stuffs
+#include "assimp/Importer.hpp"
+#include "assimp/scene.h"
+#include "assimp/postprocess.h"
+
+#pragma comment (lib,"assimp.lib")
+
 GDIPlusManager gdipm;
 
 #define windowLenth (1024)
@@ -19,7 +28,10 @@ App::App()
 	m_wnd(windowLenth, windowWidth, "Banana Engine"),
 	m_light(m_wnd.Gfx())
 {
+	
+	
 
+	
 	class Factory {
 
 	public:
@@ -81,6 +93,19 @@ App::App()
 					rdist
 					);
 
+			case 4:
+
+				return std::make_unique<Model>(
+					gfx,
+					rng,
+					adist,
+					ddist,
+					odist,
+					rdist,
+					mat, 
+					1.5f
+					);
+
 			default:
 				assert(false && "Impossible drawable option in factory");
 				return {};
@@ -96,7 +121,7 @@ App::App()
 
 		Graphics& gfx;
 		std::mt19937 rng{ std::random_device{}() };
-		std::uniform_int_distribution<int> sdist{ 0,3 };
+		std::uniform_int_distribution<int> sdist{ 0,4 };
 		std::uniform_real_distribution<float> adist{ 0.0f,PI * 2.0f };
 		std::uniform_real_distribution<float> ddist{ 0.0f,PI * 0.5f };
 		std::uniform_real_distribution<float> odist{ 0.0f,PI * 0.08f };
