@@ -21,7 +21,7 @@ void TransformCbuf::Bind(Graphics & gfx) noexcept
 {
 
 	const auto modelView = parent.GetTransformXM() * gfx.GetCamera();
-	const Transforms transform = {
+	const Transforms m_transform = {
 		DirectX::XMMatrixTranspose(modelView),
 		DirectX::XMMatrixTranspose(
 			modelView *
@@ -31,7 +31,7 @@ void TransformCbuf::Bind(Graphics & gfx) noexcept
 
 
 	//Update the constant buffer every frame
-	pVcbuf->Update(gfx, transform);
+	pVcbuf->Update(gfx, m_transform);
 
 	//bind the constant buffer to the graphic objects every frame
 	pVcbuf->Bind(gfx);

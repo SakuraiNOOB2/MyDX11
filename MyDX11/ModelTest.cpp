@@ -1,4 +1,4 @@
-#include "Model.h"
+#include "ModelTest.h"
 #include "BindableBase.h"
 #include "GraphicsThrowMacros.h"
 
@@ -10,7 +10,7 @@
 
 #include "Vertex.h"
 
-Model::Model(Graphics& gfx, std::mt19937& rng, 
+ModelTest::ModelTest(Graphics& gfx, std::mt19937& rng,
 	std::uniform_real_distribution<float>& adist, 
 	std::uniform_real_distribution<float>& ddist, 
 	std::uniform_real_distribution<float>& odist, 

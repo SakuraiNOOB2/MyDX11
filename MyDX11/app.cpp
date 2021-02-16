@@ -3,7 +3,7 @@
 #include "Cylinder.h"
 #include "Pyramid.h"
 #include "SkinnedBox.h"
-#include "Model.h"
+#include "ModelTest.h"
 #include <memory>
 #include <algorithm>
 #include "myMath.h"
@@ -11,13 +11,6 @@
 #include "GDIPlusManager.h"
 #include "imgui/imgui.h"
 
-//assimp loading stuffs
-#include "assimp/Importer.hpp"
-#include "assimp/scene.h"
-#include "assimp/postprocess.h"
-
-
-#pragma comment (lib,"assimp.lib")
 
 GDIPlusManager gdipm;
 
@@ -97,7 +90,7 @@ App::App()
 
 			case 4:
 
-				return std::make_unique<Model>(
+				return std::make_unique<ModelTest>(
 					gfx,
 					rng,
 					adist,
@@ -189,6 +182,14 @@ void App::DoFrame() {
 		d->Draw(m_wnd.Gfx());
 	}
 	
+
+	//nano boi model
+	const auto transform = 
+		DirectX::XMMatrixRotationRollPitchYaw(pos.roll, pos.pitch, pos.yaw) *
+		DirectX::XMMatrixTranslation(pos.x, pos.y, pos.z);
+	m_nano.Draw(m_wnd.Gfx(), transform);
+
+	//point light
 	m_light.Draw(m_wnd.Gfx());
 
 	/// <summary>
@@ -203,6 +204,7 @@ void App::DoFrame() {
 	//imgui windows to control camera and light
 	m_camera.SpawnControlWindow();
 	m_light.SpawnControlWindow();
+	ShowNanoWindow();
 
 	//imgui windows to control boxes
 	SpawnBoxWindowManagerWindow();
@@ -283,6 +285,28 @@ void App::SpawnBoxWindows() noexcept
 		}
 		
 	}
+}
+
+void App::ShowNanoWindow()
+{
+
+	if (ImGui::Begin("Nano Boi"))
+	{
+		using namespace std::string_literals;
+
+		ImGui::Text("Orientation");
+		ImGui::SliderAngle("Roll", &pos.roll, -180.0f, 180.0f);
+		ImGui::SliderAngle("Pitch", &pos.pitch, -180.0f, 180.0f);
+		ImGui::SliderAngle("Yaw", &pos.yaw, -180.0f, 180.0f);
+
+		ImGui::Text("Position");
+		ImGui::SliderFloat("X", &pos.x, -20.0f, 20.0f);
+		ImGui::SliderFloat("Y", &pos.y, -20.0f, 20.0f);
+		ImGui::SliderFloat("Z", &pos.z, -20.0f, 20.0f);
+	}
+
+	ImGui::End();
+
 }
 
 

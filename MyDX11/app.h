@@ -4,6 +4,7 @@
 #include "imguiManager.h"
 #include "camera.h"
 #include "PointLight.h"
+#include "Model.h"
 #include <set>
 
 class App {
@@ -27,6 +28,8 @@ private:
 	void SpawnBoxWindowManagerWindow() noexcept;
 	void SpawnBoxWindows() noexcept;
 
+	void ShowNanoWindow();
+
 private:
 	ImguiManager imgui;
 
@@ -45,8 +48,20 @@ private:
 	//Drawable
 	std::vector<std::unique_ptr<class Drawable>> m_drawables;
 	std::vector<class Box*> m_boxes;
-	
-	static constexpr size_t m_nDrawables = 180;
+	static constexpr size_t m_nDrawables = 45;
+
+	Model m_nano{ m_wnd.Gfx(),"asset\\model\\nanosuit.obj" };
+
+	//model parameters
+	struct {
+
+		float roll = 0.0f;
+		float pitch = 0.0f;
+		float yaw = 0.0f;
+		float x = 0.0f;
+		float y = 0.0f;
+		float z = 0.0f;
+	}pos;
 
 	//Combo Box control 
 	std::optional<int> m_comboBoxIndex;

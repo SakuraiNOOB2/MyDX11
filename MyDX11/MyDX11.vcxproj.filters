@@ -162,7 +162,7 @@
     <ClCompile Include="SkinnedBox.cpp">
       <Filter>ソース ファイル\Drawable</Filter>
     </ClCompile>
-    <ClCompile Include="Model.cpp">
+    <ClCompile Include="ModelTest.cpp">
       <Filter>ソース ファイル\Model</Filter>
     </ClCompile>
   </ItemGroup>
@@ -329,11 +329,14 @@
     <ClInclude Include="SkinnedBox.h">
       <Filter>ヘッダー ファイル\Drawable</Filter>
     </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>ヘッダー ファイル\Model</Filter>
-    </ClInclude>
     <ClInclude Include="Vertex.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelTest.h">
+      <Filter>ヘッダー ファイル\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>ヘッダー ファイル\Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
