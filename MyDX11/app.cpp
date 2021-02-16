@@ -16,6 +16,8 @@
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
 
+#include "VertexLayout.h"
+
 #pragma comment (lib,"assimp.lib")
 
 GDIPlusManager gdipm;
@@ -23,14 +25,24 @@ GDIPlusManager gdipm;
 #define windowLenth (1024)
 #define windowWidth (768)
 
+void f()
+{
+	VertexLayout vl;
+	vl.Append<VertexLayout::Position3D>()
+		.Append<VertexLayout::Normal>();
+	VertexBuffer vb(std::move(vl));
+	vb.EmplaceBack(DirectX::XMFLOAT3{ 1.0f,1.0f,5.0f }, DirectX::XMFLOAT3{ 2.0f,1.0f,4.0f });
+	auto pos = vb[0].Attr<VertexLayout::Position3D>();
+}
+
+
 App::App()
 	:
 	m_wnd(windowLenth, windowWidth, "Banana Engine"),
 	m_light(m_wnd.Gfx())
 {
 	
-	
-
+	f();
 	
 	class Factory {
 
