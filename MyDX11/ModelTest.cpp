@@ -2,11 +2,10 @@
 #include "BindableBase.h"
 #include "GraphicsThrowMacros.h"
 
-#include "assimp/Importer.hpp"
-#include "assimp/scene.h"
-#include "assimp/postprocess.h"
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
-#pragma comment (lib,"assimp.lib")
 
 #include "Vertex.h"
 
@@ -32,7 +31,6 @@ ModelTest::ModelTest(Graphics& gfx, std::mt19937& rng,
 				.Append(VertexLayout::Normal)
 			)
 		);
-
 
 
 		Assimp::Importer imp;
