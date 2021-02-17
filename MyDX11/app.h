@@ -27,8 +27,7 @@ private:
 	void SpawnSimulationWindow() noexcept;
 	void SpawnBoxWindowManagerWindow() noexcept;
 	void SpawnBoxWindows() noexcept;
-
-	void ShowNanoWindow();
+	void ShowImguiDemoWindow();
 
 private:
 	ImguiManager imgui;
@@ -52,16 +51,6 @@ private:
 
 	Model m_nano{ m_wnd.Gfx(),"asset\\model\\nanosuit.obj" };
 
-	//model parameters
-	struct {
-
-		float roll = 0.0f;
-		float pitch = 0.0f;
-		float yaw = 0.0f;
-		float x = 0.0f;
-		float y = 0.0f;
-		float z = 0.0f;
-	}pos;
 
 	//Combo Box control 
 	std::optional<int> m_comboBoxIndex;

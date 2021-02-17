@@ -177,6 +177,7 @@
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="InputLayout.cpp" />
     <ClCompile Include="keyboard.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelTest.cpp" />
     <ClCompile Include="mouse.cpp" />
     <ClCompile Include="myException.cpp" />

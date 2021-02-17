@@ -184,10 +184,7 @@ void App::DoFrame() {
 	
 
 	//nano boi model
-	const auto transform = 
-		DirectX::XMMatrixRotationRollPitchYaw(pos.roll, pos.pitch, pos.yaw) *
-		DirectX::XMMatrixTranslation(pos.x, pos.y, pos.z);
-	m_nano.Draw(m_wnd.Gfx(), transform);
+	m_nano.Draw(m_wnd.Gfx());
 
 	//point light
 	m_light.Draw(m_wnd.Gfx());
@@ -201,14 +198,14 @@ void App::DoFrame() {
 	static char buffer[1024];
 	SpawnSimulationWindow();
 
-	//imgui windows to control camera and light
-	m_camera.SpawnControlWindow();
-	m_light.SpawnControlWindow();
-	ShowNanoWindow();
+	//imgui windows for controling stuffs
+	m_camera.SpawnControlWindow();	//camera
+	m_light.SpawnControlWindow();	//point light
+	//ShowImguiDemoWindow();
+	m_nano.ShowWindow();		//nano boi
 
-	//imgui windows to control boxes
-	SpawnBoxWindowManagerWindow();
-	SpawnBoxWindows();
+	SpawnBoxWindowManagerWindow();	 //boxes manager
+	SpawnBoxWindows();			//boxes
 	
 	
 	ImGui::End();
@@ -287,28 +284,15 @@ void App::SpawnBoxWindows() noexcept
 	}
 }
 
-void App::ShowNanoWindow()
+void App::ShowImguiDemoWindow()
 {
+	static bool isShowDemoWindow = true;
 
-	if (ImGui::Begin("Nano Boi"))
-	{
-		using namespace std::string_literals;
+	if (isShowDemoWindow) {
 
-		ImGui::Text("Orientation");
-		ImGui::SliderAngle("Roll", &pos.roll, -180.0f, 180.0f);
-		ImGui::SliderAngle("Pitch", &pos.pitch, -180.0f, 180.0f);
-		ImGui::SliderAngle("Yaw", &pos.yaw, -180.0f, 180.0f);
-
-		ImGui::Text("Position");
-		ImGui::SliderFloat("X", &pos.x, -20.0f, 20.0f);
-		ImGui::SliderFloat("Y", &pos.y, -20.0f, 20.0f);
-		ImGui::SliderFloat("Z", &pos.z, -20.0f, 20.0f);
-
-
-
+		ImGui::ShowDemoWindow(&isShowDemoWindow);
 	}
 
-	ImGui::End();
 
 }
 
