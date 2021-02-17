@@ -2,20 +2,23 @@
 
 #include "Bindable.h"
 
-class VertexShader :public Bindable {
+namespace Bind {
+
+	class VertexShader :public Bindable {
 
 
-public:
+	public:
 
-	VertexShader(Graphics& gfx, const std::wstring& path);
-	void Bind(Graphics& gfx) noexcept override;
+		VertexShader(Graphics& gfx, const std::wstring& path);
+		void Bind(Graphics& gfx) noexcept override;
 
-	ID3DBlob* GetByteCode() const noexcept;
+		ID3DBlob* GetByteCode() const noexcept;
 
-private:
+	private:
 
-	Microsoft::WRL::ComPtr<ID3DBlob> pBytecodeBlob;
-	Microsoft::WRL::ComPtr<ID3D11VertexShader> pVertexShader;
+		Microsoft::WRL::ComPtr<ID3DBlob> pBytecodeBlob;
+		Microsoft::WRL::ComPtr<ID3D11VertexShader> pVertexShader;
 
+	};
 
-};
+}

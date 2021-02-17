@@ -3,6 +3,8 @@
 #include "TestObjects.h"
 #include "ConstantBuffers.h"
 
+using namespace Bind;
+
 //Drawable Base templated on Box
 class Box :public TestObject<Box> {
 

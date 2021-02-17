@@ -11,9 +11,14 @@
 #include <memory>
 #include <random>
 
+namespace Bind
+{
+	class Bindable;
+}
+
 class Graphics {
 
-	friend class Bindable;
+	friend class Bind::Bindable;
 
 public:
 

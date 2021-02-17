@@ -14,6 +14,8 @@ Pyramid::Pyramid(Graphics& gfx,
 	:TestObject(gfx,rng,adist,ddist,odist,rdist)
 {
 
+	using namespace Bind;
+
 	if (!IsStaticInitialized()) {
 
 		

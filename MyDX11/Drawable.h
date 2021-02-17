@@ -3,8 +3,12 @@
 #include "graphics.h"
 #include <DirectXMath.h>
 
+namespace Bind {
 
-class Bindable;
+	class Bindable;
+	class IndexBuffer;
+}
+
 
 class Drawable {
 
@@ -46,18 +50,18 @@ protected:
 	}
 
 	//Adding Bindables and IndexBuffer
-	void AddBind(std::unique_ptr<Bindable> bind) noexcept(!IS_DEBUG);
-	void AddIndexBuffer(std::unique_ptr<class IndexBuffer> ibuf) noexcept(!IS_DEBUG);
+	void AddBind(std::unique_ptr<Bind::Bindable> bind) noexcept(!IS_DEBUG);
+	void AddIndexBuffer(std::unique_ptr<Bind::IndexBuffer> ibuf) noexcept(!IS_DEBUG);
 
 private:
 
 	//Bridge for Drawable class to access the staticBinds going to be declare by its children
-	virtual const std::vector<std::unique_ptr<Bindable>>& GetStaticBinds() const noexcept = 0;
+	virtual const std::vector<std::unique_ptr<Bind::Bindable>>& GetStaticBinds() const noexcept = 0;
 
 private:
 
 	//special pointer to the transformation constant buffer
-	const class IndexBuffer* pIndexBuffer = nullptr;
-	std::vector<std::unique_ptr<Bindable>> binds;
+	const class Bind::IndexBuffer* pIndexBuffer = nullptr;
+	std::vector<std::unique_ptr<Bind::Bindable>> binds;
 	
 };

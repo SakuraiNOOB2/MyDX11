@@ -3,6 +3,8 @@
 #include "IndexBuffer.h"
 #include <cassert>
 
+using namespace Bind;
+
 void Drawable::Draw(Graphics& gfx) const noexcept(!IS_DEBUG)
 {
 	//Bind all the instance binds

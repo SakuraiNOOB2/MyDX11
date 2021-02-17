@@ -4,28 +4,31 @@
 #include "Drawable.h"
 #include <DirectXMath.h>
 
+namespace Bind {
 
-class TransformCbuf :public Bindable {
+	class TransformCbuf :public Bindable {
 
-private:
+	private:
 
-	struct Transforms{
+		struct Transforms {
 
-		DirectX::XMMATRIX modelViewProj;
-		DirectX::XMMATRIX model;
+			DirectX::XMMATRIX modelViewProj;
+			DirectX::XMMATRIX model;
+		};
+
+	public:
+
+		TransformCbuf(Graphics& gfx, const Drawable& parent, UINT slot = 0u);
+		void Bind(Graphics& gfx) noexcept override;
+
+	private:
+
+		//dynamic allocated static VertexConstantBuffer
+		static std::unique_ptr<VertexConstantBuffer<Transforms>> pVcbuf;
+
+		//Grab the matrix from it's parent and update to vcbuf
+		const Drawable& parent;
+
 	};
 
-public:
-
-	TransformCbuf(Graphics& gfx, const Drawable& parent, UINT slot = 0u);
-	void Bind(Graphics& gfx) noexcept override;
-
-private:
-
-	//dynamic allocated static VertexConstantBuffer
-	static std::unique_ptr<VertexConstantBuffer<Transforms>> pVcbuf;
-	
-	//Grab the matrix from it's parent and update to vcbuf
-	const Drawable& parent;
-
-};
+}

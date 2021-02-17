@@ -1,5 +1,5 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Visual C++ で生成されたインクルード ファイル。
+// Microsoft Visual C++ で生成されたイ?ク?ード ファイ?。
 // MyDX11.rc で使用
 //
 #define IDI_ICON1                       101

@@ -23,7 +23,7 @@ Box::Box(Graphics& gfx,
 		odist,
 		rdist)
 {
-
+	using namespace Bind;
 
 	//check this class is statically initialized or not 
 	if (!IsStaticInitialized()) {

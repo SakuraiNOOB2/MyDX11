@@ -2,20 +2,23 @@
 
 #include "Bindable.h"
 
+namespace Bind {
 
-class InputLayout :public Bindable {
+	class InputLayout :public Bindable {
 
-public:
+	public:
 
-	//Constructor
-	InputLayout(Graphics& gfx,
-		const std::vector<D3D11_INPUT_ELEMENT_DESC>& layout,
-		ID3DBlob* pVertexShaderByteCode);
+		//Constructor
+		InputLayout(Graphics& gfx,
+			const std::vector<D3D11_INPUT_ELEMENT_DESC>& layout,
+			ID3DBlob* pVertexShaderByteCode);
 
-	void Bind(Graphics& gfx) noexcept override;
+		void Bind(Graphics& gfx) noexcept override;
 
-protected:
+	protected:
 
-	Microsoft::WRL::ComPtr<ID3D11InputLayout> pInputLayout;
+		Microsoft::WRL::ComPtr<ID3D11InputLayout> pInputLayout;
 
-};
+	};
+
+}

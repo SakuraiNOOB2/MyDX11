@@ -303,6 +303,9 @@ void App::ShowNanoWindow()
 		ImGui::SliderFloat("X", &pos.x, -20.0f, 20.0f);
 		ImGui::SliderFloat("Y", &pos.y, -20.0f, 20.0f);
 		ImGui::SliderFloat("Z", &pos.z, -20.0f, 20.0f);
+
+
+
 	}
 
 	ImGui::End();

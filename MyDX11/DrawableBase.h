@@ -17,17 +17,17 @@ protected:
 	}
 
 	//Add static bindables
-	static void AddStaticBind(std::unique_ptr<Bindable> bind) noexcept(!IS_DEBUG) {
+	static void AddStaticBind(std::unique_ptr<Bind::Bindable> bind) noexcept(!IS_DEBUG) {
 
 		//Check binds' typeid is IndexBuffer or not
-		assert("**Must** use ONLY AddStaticIndexBuffer to bind index buffer!" && typeid(*bind) != typeid(IndexBuffer));
+		assert("**Must** use ONLY AddStaticIndexBuffer to bind index buffer!" && typeid(*bind) != typeid(Bind::IndexBuffer));
 
 		staticBinds.push_back(std::move(bind));
 
 	}
 
 	//Add static index buffers
-	void AddStaticIndexBuffer(std::unique_ptr<IndexBuffer> ibuf) noexcept(!IS_DEBUG) {
+	void AddStaticIndexBuffer(std::unique_ptr<Bind::IndexBuffer> ibuf) noexcept(!IS_DEBUG) {
 
 		//
 		assert("Attempting to add index buffer a second time" && pIndexBuffer == nullptr);
@@ -47,7 +47,7 @@ protected:
 		for (const auto& b : staticBinds) {
 
 			//dynamic_cast to find the indexBuffer
-			if (const auto p = dynamic_cast<IndexBuffer*>(b.get())) {
+			if (const auto p = dynamic_cast<Bind::IndexBuffer*>(b.get())) {
 
 				//setting indexBuffer pointer
 				pIndexBuffer = p;
@@ -63,18 +63,18 @@ protected:
 
 private:
 
-	const std::vector<std::unique_ptr<Bindable>>& GetStaticBinds() const noexcept override {
+	const std::vector<std::unique_ptr<Bind::Bindable>>& GetStaticBinds() const noexcept override {
 
 		return staticBinds;
 	}
 
 private:
 
-	static std::vector<std::unique_ptr<Bindable>> staticBinds;
+	static std::vector<std::unique_ptr<Bind::Bindable>> staticBinds;
 
 };
 
 //declare outsite the class for static parameter
 template<class T>
-std::vector<std::unique_ptr<Bindable>> DrawableBase<T>::staticBinds;
+std::vector<std::unique_ptr<Bind::Bindable>> DrawableBase<T>::staticBinds;
 
