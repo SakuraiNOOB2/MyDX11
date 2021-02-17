@@ -1,6 +1,47 @@
 #include "Model.h"
 #include "imgui/imgui.h"
 #include <unordered_map>
+#include <sstream>
+
+/// <summary>
+/// Model Error Handeling
+/// </summary>
+
+ModelException::ModelException(int line, const char* file, std::string note) noexcept
+	:
+	myException(line,file),
+	m_note(std::move(note))
+{
+}
+
+
+const char* ModelException::what() const noexcept
+{
+	std::ostringstream oss;
+
+	oss << myException::what() << std::endl
+		<< "[Note] " << GetNote();
+
+	whatBuffer = oss.str();
+
+	return whatBuffer.c_str();
+}
+
+const char* ModelException::GetType() const noexcept
+{
+	return "SupaHotFire Model Exception";
+}
+
+const std::string& ModelException::GetNote() const noexcept
+{
+	// TODO: insert return statement here
+	return m_note;
+}
+
+
+/// <summary>
+/// Mesh Handeling
+/// </summary>
 
 //constructor
 Mesh::Mesh(Graphics& gfx, std::vector<std::unique_ptr<Bindable>> bindPtrs) {
@@ -47,12 +88,12 @@ DirectX::XMMATRIX Mesh::GetTransformXM() const noexcept {
 	return DirectX::XMLoadFloat4x4(&m_transform);
 }
 
-Node::Node(const std::string& name, std::vector<Mesh*> meshPtrs, const DirectX::XMMATRIX& m_transform) noexcept(!IS_DEBUG)
+Node::Node(const std::string& name, std::vector<Mesh*> meshPtrs, const DirectX::XMMATRIX& transform_in) noexcept(!IS_DEBUG)
 	:
 	meshPtrs(std::move(meshPtrs)),
 	m_name(name)
 {
-	DirectX::XMStoreFloat4x4(&baseTransform, m_transform);
+	DirectX::XMStoreFloat4x4(&baseTransform, transform_in);
 	DirectX::XMStoreFloat4x4(&appliedTransform, DirectX::XMMatrixIdentity());
 }
 
@@ -60,8 +101,8 @@ void Node::Draw(Graphics& gfx, DirectX::FXMMATRIX accumulatedTransform) const no
 
 	//attaching parent's transform to own node's transform
 	const auto built =
-		DirectX::XMLoadFloat4x4(&baseTransform) *
 		DirectX::XMLoadFloat4x4(&appliedTransform) *
+		DirectX::XMLoadFloat4x4(&baseTransform) *
 		accumulatedTransform;
 
 	//applying transform to all mesh connected to this node 
@@ -97,18 +138,21 @@ void Node::ShowNodeTree(int& nodeIndexTracked,
 		| ((currentNodeIndex == selectedIndex.value_or(-1)) ? ImGuiTreeNodeFlags_Selected : 0)
 		| ((childPtrs.size() == 0) ? ImGuiTreeNodeFlags_Leaf : 0);
 
-	// if tree node expanded, recursively render all children
-	if (ImGui::TreeNodeEx(
-		(void*)(intptr_t)currentNodeIndex, 
-		node_flags, m_name.c_str())
-		){
+	//render this node
 
-		// detecting / setting selected node
-		if (ImGui::IsItemClicked())
-		{
-			selectedIndex = currentNodeIndex;
-			pSelectedNode = const_cast<Node*>(this);
-		}
+	const auto expanded = ImGui::TreeNodeEx(
+		(void*)(intptr_t)currentNodeIndex,
+		node_flags, m_name.c_str());
+	
+	// processing for selecting node
+	if (ImGui::IsItemClicked())
+	{
+		selectedIndex = currentNodeIndex;
+		pSelectedNode = const_cast<Node*>(this);
+	}
+
+	// recursive rendering of open node's children
+	if (expanded){
 
 		for (const auto& pChild : childPtrs){
 
@@ -138,8 +182,18 @@ Model::Model(Graphics& gfx, const std::string fileName)
 	//reading model file into pScene
 	const auto pScene = imp.ReadFile(fileName.c_str(),
 		aiProcess_Triangulate |
-		aiProcess_JoinIdenticalVertices
+		aiProcess_JoinIdenticalVertices |
+		aiProcess_ConvertToLeftHanded |
+		aiProcess_GenNormals
 	);
+
+	if (pScene == nullptr) {
+
+		throw ModelException(__LINE__,
+			__FILE__, 
+			imp.GetErrorString());
+	}
+	
 
 	//load all meshes from pScene
 	for (size_t i = 0; i < pScene->mNumMeshes; i++) {
@@ -325,3 +379,4 @@ Node* ModelWindow::GetSelectedNode() const noexcept
 {
 	return m_pSelectedNode;
 }
+

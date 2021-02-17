@@ -14,7 +14,7 @@ namespace Bind {
         return gfx.pDevice.Get();
     }
 
-    DxgiInfoManager& Bindable::GetInfoManager(Graphics& gfx) noexcept(IS_DEBUG)
+    DxgiInfoManager& Bindable::GetInfoManager(Graphics& gfx)
     {
 
 #ifndef NDEBUG

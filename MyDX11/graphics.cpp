@@ -16,15 +16,15 @@ namespace dx = DirectX;				//DirectX custom short form
 
 
 
-Graphics::Graphics(HWND hWnd) {
+Graphics::Graphics(HWND hWnd,int width,int height) {
 
 	//required structure configuration information
 	
 	DXGI_SWAP_CHAIN_DESC sd = {};
 
 	//
-	sd.BufferDesc.Width = 0;
-	sd.BufferDesc.Height = 0;
+	sd.BufferDesc.Width = width;
+	sd.BufferDesc.Height = height;
 
 	//layout of the pixels the channels in 
 	sd.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
@@ -106,8 +106,8 @@ Graphics::Graphics(HWND hWnd) {
 	//create depth stencil texture
 	wrl::ComPtr<ID3D11Texture2D> pDepthStencil;
 	D3D11_TEXTURE2D_DESC descDepth = {};
-	descDepth.Width = 1024u;
-	descDepth.Height = 768u;
+	descDepth.Width = width;
+	descDepth.Height = height;
 	descDepth.MipLevels = 1u;
 	descDepth.ArraySize = 1u;
 	descDepth.Format = DXGI_FORMAT_D32_FLOAT;	//D32 is a special format for depth in 32bit
@@ -134,8 +134,8 @@ Graphics::Graphics(HWND hWnd) {
 
 	//conffigure viewport
 	D3D11_VIEWPORT vp;
-	vp.Width = 1024.0f;
-	vp.Height = 768.0f;
+	vp.Width = (float)width;
+	vp.Height = (float)height;
 	vp.MinDepth = 0.0f;
 	vp.MaxDepth = 1.0f;
 	vp.TopLeftX = 0.0f;
