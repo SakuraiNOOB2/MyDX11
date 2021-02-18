@@ -176,6 +176,25 @@ void App::DoFrame() {
 	//point light
 	m_light.Draw(m_wnd.Gfx());
 
+	//raw input stuffs
+	while (const auto e = m_wnd.kbd.ReadKey()){
+
+		if (e->IsPress() && e->GetCode() == VK_INSERT)
+		{
+			if (m_wnd.GetCursorEnabled())
+			{
+				m_wnd.DisableCursor();
+				m_wnd.mouse.EnableRaw();
+			}
+			else
+			{
+				m_wnd.EnableCursor();
+				m_wnd.mouse.DisableRaw();
+			}
+		}
+	}
+
+
 	/// <summary>
 	/// imgui stuff
 	/// </summary>
@@ -190,6 +209,8 @@ void App::DoFrame() {
 	m_light.SpawnControlWindow();	//point light
 	//ShowImguiDemoWindow();
 	m_nano.ShowWindow();		//nano boi
+	ShowRawInputWindow();
+
 
 	SpawnBoxWindowManagerWindow();	 //boxes manager
 	SpawnBoxWindows();			//boxes
@@ -280,6 +301,22 @@ void App::ShowImguiDemoWindow()
 		ImGui::ShowDemoWindow(&isShowDemoWindow);
 	}
 
+
+}
+
+void App::ShowRawInputWindow()
+{
+	while (const auto d = m_wnd.mouse.ReadRawDelta())
+	{
+		x += d->x;
+		y += d->y;
+	}
+	if (ImGui::Begin("Raw Input"))
+	{
+		ImGui::Text("Tally: (%d,%d)", x, y);
+		ImGui::Text("Cursor: %s", m_wnd.GetCursorEnabled() ? "enabled" : "disabled");
+	}
+	ImGui::End();
 
 }
 

@@ -88,6 +88,7 @@ public:
 	//cursor handeling
 	void EnableCursor() noexcept;
 	void DisableCursor() noexcept;
+	bool GetCursorEnabled() const noexcept;
 
 private:
 	static LRESULT CALLBACK HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
@@ -110,8 +111,11 @@ public:
 	Mouse mouse;
 private:
 
+	//mouse stuffs
 	bool isCursorEnabled = true;
+	std::vector<BYTE> rawBuffer;
 
+	//window stuffs
 	int width;
 	int height;
 	HWND hWnd;

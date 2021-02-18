@@ -28,6 +28,7 @@ private:
 	void SpawnBoxWindowManagerWindow() noexcept;
 	void SpawnBoxWindows() noexcept;
 	void ShowImguiDemoWindow();
+	void ShowRawInputWindow();
 
 private:
 	ImguiManager imgui;
@@ -55,5 +56,8 @@ private:
 	//Combo Box control 
 	std::optional<int> m_comboBoxIndex;
 	std::set<int> m_boxControlIDs;
+
+	//raw input data
+	int x = 0, y = 0;
 
 };

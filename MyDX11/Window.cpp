@@ -97,6 +97,19 @@ Window::Window(int width, int height, const char* name)
 
 	//create graphics object
 	pGfx = std::make_unique<Graphics>(hWnd,width,height);
+
+	// register mouse raw input device
+	RAWINPUTDEVICE rid;
+	rid.usUsagePage = 0x01; // mouse page
+	rid.usUsage = 0x02; // mouse usage
+	rid.dwFlags = 0;
+	rid.hwndTarget = nullptr;
+
+	if (RegisterRawInputDevices(&rid, 1, sizeof(rid)) == FALSE){
+
+		throw CHWND_LAST_EXCEPT();
+	}
+
 }
 
 Window::~Window() {
@@ -165,6 +178,11 @@ void Window::DisableCursor() noexcept
 	ConfineCursor();
 }
 
+bool Window::GetCursorEnabled() const noexcept
+{
+	return isCursorEnabled;
+}
+
 //Installation: Setup pointers to instances in windows 32 side
 LRESULT WINAPI Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
@@ -217,7 +235,7 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 	}
 
 	// imgui input/output
-	const auto imguiIO = ImGui::GetIO();
+	const auto& imguiIO = ImGui::GetIO();
 
 	static WindowsMessageMap messageMap;
 	OutputDebugString(messageMap(msg, lParam, wParam).c_str());
@@ -352,15 +370,14 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 		//Bring window to foregroun on lclick client region
 		SetForegroundWindow(hWnd);
 
-		if (!isCursorEnabled)
-		{
+		if (!isCursorEnabled){
 
 			ConfineCursor();
 			HideCursor();
 		}
 
 		//stifle this keyboard message if imgui wants to capture 
-		if (imguiIO.WantCaptureKeyboard) {
+		if (imguiIO.WantCaptureMouse) {
 			break;
 		}
 
@@ -372,7 +389,7 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 	case WM_RBUTTONDOWN:
 	{
 		//stifle this keyboard message if imgui wants to capture 
-		if (imguiIO.WantCaptureKeyboard) {
+		if (imguiIO.WantCaptureMouse) {
 			break;
 		}
 		const POINTS pt = MAKEPOINTS(lParam);
@@ -383,7 +400,7 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 	case WM_LBUTTONUP:
 	{
 		//stifle this keyboard message if imgui wants to capture 
-		if (imguiIO.WantCaptureKeyboard) {
+		if (imguiIO.WantCaptureMouse) {
 			break;
 		}
 
@@ -402,7 +419,7 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 	case WM_RBUTTONUP:
 	{
 		//stifle this keyboard message if imgui wants to capture 
-		if (imguiIO.WantCaptureKeyboard) {
+		if (imguiIO.WantCaptureMouse) {
 			break;
 		}
 
@@ -427,6 +444,55 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 		mouse.OnWheelDelta(pt.x, pt.y, delta);
 
 		break;
+	}
+
+	//Raw Mouse Messages
+	case WM_INPUT:
+	{
+
+		if (!mouse.GetRawEnabled()){
+
+			break;
+		}
+
+		UINT size;
+
+		// first get the size of the input data
+		if (GetRawInputData(
+			reinterpret_cast<HRAWINPUT>(lParam),
+			RID_INPUT,
+			nullptr,
+			&size,
+			sizeof(RAWINPUTHEADER)) == -1){
+
+			// bail msg processing if error
+			break;
+		}
+
+		rawBuffer.resize(size);
+
+		// read in the input data
+		if (GetRawInputData(
+			reinterpret_cast<HRAWINPUT>(lParam),
+			RID_INPUT,
+			rawBuffer.data(),
+			&size,
+			sizeof(RAWINPUTHEADER)) != size){
+
+			// bail msg processing if error
+			break;
+		}
+
+		// process the raw input data
+		auto& ri = reinterpret_cast<const RAWINPUT&>(*rawBuffer.data());
+		if (ri.header.dwType == RIM_TYPEMOUSE &&
+			(ri.data.mouse.lLastX != 0 || ri.data.mouse.lLastY != 0)){
+			
+			mouse.OnRawDelta(ri.data.mouse.lLastX, ri.data.mouse.lLastY);
+		}
+
+		break;
+
 	}
 
 	}
