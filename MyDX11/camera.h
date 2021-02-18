@@ -6,24 +6,26 @@ class Camera {
 
 public:
 
+	//constructor
+
+	Camera() noexcept;
+
 	DirectX::XMMATRIX GetMatrix() const noexcept;
 	void SpawnControlWindow() noexcept;
 	void Reset() noexcept;
 
+	void Rotate(float dx, float dy) noexcept;
+	void Translate(DirectX::XMFLOAT3 translation) noexcept;
+
 private:
 
-	//distance of the camera from origin
-	float r = 20.0f;
 
-	//rotation around the equater
-	float theta = 0.0f;
-	
-	//rotation around the towards the north pole
-	float phi = 0.0f;
-
+	DirectX::XMFLOAT3 position;
 	//orientation of the camera
 	float pitch = 0.0f;
 	float yaw = 0.0f;
-	float roll = 0.0f;
+
+	static constexpr float velocity = 12.0f;
+	static constexpr float rotationSpeed = 0.004f;
 
 };

@@ -47,7 +47,7 @@ void PointLight::Reset() noexcept
 
 	//Reset Light ConstantBuffer data
 	cbData = {
-		{0.0f,0.0f,0.0f},		//Position
+		{1.5f,14.0f,-4.5f},		//Position
 		{0.05f,0.05f,0.05f},	//Ambient
 		{1.0f,1.0f,1.0f},		//Diffuse Color
 		1.0f,					//Diffuse Intensity

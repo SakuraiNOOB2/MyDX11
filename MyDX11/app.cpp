@@ -179,19 +179,97 @@ void App::DoFrame() {
 	//raw input stuffs
 	while (const auto e = m_wnd.kbd.ReadKey()){
 
-		if (e->IsPress() && e->GetCode() == VK_INSERT)
-		{
+
+		if (!e->IsPress()) {
+
+			continue;
+		}
+
+		switch (e->GetCode()) {
+
+		case VK_ESCAPE:
+
 			if (m_wnd.GetCursorEnabled())
 			{
 				m_wnd.DisableCursor();
 				m_wnd.mouse.EnableRaw();
 			}
-			else
-			{
-				m_wnd.EnableCursor();
-				m_wnd.mouse.DisableRaw();
+
+			break;
+
+		case VK_F1:
+
+
+			break;
+
+		case VK_F2:
+
+			if (m_wnd.GetCursorEnabled()) {
+
+				m_wnd.DisableCursor();
+
 			}
+			else {
+
+				m_wnd.EnableCursor();
+			}
+
+		case VK_F3:
+
+			if (m_wnd.mouse.GetRawEnabled()) {
+
+				m_wnd.mouse.DisableRaw();
+
+			}
+			else {
+
+				m_wnd.mouse.EnableRaw();
+			}
+			
+
+			break;
 		}
+
+		if (!m_wnd.GetCursorEnabled()) {
+
+			if (m_wnd.kbd.KeyIsPressed('W')){
+
+				m_camera.Translate({ 0.0f,0.0f,dt });
+			}
+			if (m_wnd.kbd.KeyIsPressed('A')){
+
+				m_camera.Translate({ -dt,0.0f,0.0f });
+			}
+			if (m_wnd.kbd.KeyIsPressed('S')){
+
+				m_camera.Translate({ 0.0f,0.0f,-dt });
+			}
+
+			if (m_wnd.kbd.KeyIsPressed('D')){
+
+				m_camera.Translate({ dt,0.0f,0.0f });
+			}
+			
+			if (m_wnd.kbd.KeyIsPressed('R')){
+
+				m_camera.Translate({ 0.0f,dt,0.0f });
+			}
+			if (m_wnd.kbd.KeyIsPressed('F')){
+
+				m_camera.Translate({ 0.0f,-dt,0.0f });
+			}
+
+		}
+
+		while (const auto delta = m_wnd.mouse.ReadRawDelta()) {
+
+			if (!m_wnd.GetCursorEnabled()) {
+
+				m_camera.Rotate((float)delta->x,(float)delta->y);
+			}
+
+		}
+		
 	}
 
 
@@ -200,7 +278,9 @@ void App::DoFrame() {
 	/// </summary>
 
 
-	// 1st imgui window (showing simulation speed)
+	ShowImguiHelpWindow();
+
+	//showing simulation speed window
 	static char buffer[1024];
 	SpawnSimulationWindow();
 
@@ -221,6 +301,17 @@ void App::DoFrame() {
 	
 	//present
 	m_wnd.Gfx().EndFrame();
+}
+void App::ShowImguiHelpWindow() noexcept
+{
+	if (ImGui::Begin("Help")) {
+
+		ImGui::Text("F2: Enable/Disable Mouse Cursor");
+		ImGui::Text("F3: Enable/Disable Raw Input");
+	}
+	ImGui::End();
+
+
 }
 void App::SpawnSimulationWindow() noexcept
 {
@@ -311,10 +402,11 @@ void App::ShowRawInputWindow()
 		x += d->x;
 		y += d->y;
 	}
-	if (ImGui::Begin("Raw Input"))
+	if (ImGui::Begin("Raw Mouse Input"))
 	{
 		ImGui::Text("Tally: (%d,%d)", x, y);
 		ImGui::Text("Cursor: %s", m_wnd.GetCursorEnabled() ? "enabled" : "disabled");
+		ImGui::Text("On/Off: %s", m_wnd.mouse.GetRawEnabled() ? "enabled" : "disabled");
 	}
 	ImGui::End();
 

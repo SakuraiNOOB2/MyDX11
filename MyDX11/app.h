@@ -24,6 +24,8 @@ private:
 	void DoFrame();
 
 	//imgui windows management
+	void ShowImguiHelpWindow() noexcept;
+
 	void SpawnSimulationWindow() noexcept;
 	void SpawnBoxWindowManagerWindow() noexcept;
 	void SpawnBoxWindows() noexcept;
