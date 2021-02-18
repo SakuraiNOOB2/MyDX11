@@ -52,7 +52,7 @@ private:
 	std::vector<class Box*> m_boxes;
 	static constexpr size_t m_nDrawables = 45;
 
-	Model m_nano{ m_wnd.Gfx(),"asset\\model\\nano.gltf" };
+	Model m_nano{ m_wnd.Gfx(),"asset\\model\\nano_textured\\nanosuit.obj" };
 
 
 	//Combo Box control 

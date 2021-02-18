@@ -1,5 +1,6 @@
 #include "Model.h"
 #include "imgui/imgui.h"
+#include "Surface.h"
 #include <unordered_map>
 #include <sstream>
 
@@ -130,15 +131,16 @@ int Node::GetNodeID() const noexcept
 	return m_nodeID;
 }
 
-void Node::ShowNodeTree(
-	std::optional<int>& selectedIndex, 
-	Node*& pSelectedNode) const noexcept
+void Node::ShowNodeTree(Node*& pSelectedNode) const noexcept
 {
+
+	//if there is no selected node, set selectedID to an impossible value
+	const int selectedID = (pSelectedNode == nullptr) ? -1 : pSelectedNode->GetNodeID();
 
 
 	// build up flags for current node
 	const auto node_flags = ImGuiTreeNodeFlags_OpenOnArrow
-		| ((GetNodeID() == selectedIndex.value_or(-1)) ? ImGuiTreeNodeFlags_Selected : 0)
+		| ((GetNodeID() == selectedID) ? ImGuiTreeNodeFlags_Selected : 0)
 		| ((childPtrs.size() == 0) ? ImGuiTreeNodeFlags_Leaf : 0);
 
 	//render this node
@@ -148,9 +150,8 @@ void Node::ShowNodeTree(
 		node_flags, m_name.c_str());
 	
 	// processing for selecting node
-	if (ImGui::IsItemClicked())
-	{
-		selectedIndex = GetNodeID();
+	if (ImGui::IsItemClicked()){
+
 		pSelectedNode = const_cast<Node*>(this);
 	}
 
@@ -159,7 +160,7 @@ void Node::ShowNodeTree(
 
 		for (const auto& pChild : childPtrs){
 
-			pChild->ShowNodeTree(selectedIndex, pSelectedNode);
+			pChild->ShowNodeTree(pSelectedNode);
 		}
 
 		ImGui::TreePop();
@@ -202,7 +203,7 @@ Model::Model(Graphics& gfx, const std::string fileName)
 	for (size_t i = 0; i < pScene->mNumMeshes; i++) {
 
 		//adding binded mesh into mesh pointer
-		m_meshPtrs.push_back(ParseMesh(gfx, *pScene->mMeshes[i]));
+		m_meshPtrs.push_back(ParseMesh(gfx, *pScene->mMeshes[i],pScene->mMaterials));
 	}
 
 	//updating root node
@@ -230,7 +231,7 @@ Model::~Model() noexcept
 }
 
 //binding every mesh
-std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, const aiMesh& mesh) {
+std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, const aiMesh& mesh, const aiMaterial* const* pMaterials) {
 
 
 	using MyDynamicVertex::VertexLayout;
@@ -240,6 +241,7 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, const aiMesh& mesh) {
 		VertexLayout{}
 		.Append(VertexLayout::Position3D)
 		.Append(VertexLayout::Normal)
+		.Append(VertexLayout::Texture2D)
 	));
 
 
@@ -247,7 +249,8 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, const aiMesh& mesh) {
 	{
 		vbuf.EmplaceBack(
 			*reinterpret_cast<DirectX::XMFLOAT3*>(&mesh.mVertices[i]),
-			*reinterpret_cast<DirectX::XMFLOAT3*>(&mesh.mNormals[i])
+			*reinterpret_cast<DirectX::XMFLOAT3*>(&mesh.mNormals[i]),
+			*reinterpret_cast<DirectX::XMFLOAT2*>(&mesh.mTextureCoords[0][i])
 		);
 	}
 
@@ -266,6 +269,38 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, const aiMesh& mesh) {
 
 	std::vector<std::unique_ptr<Bindable>> bindablePtrs;
 
+	bool hasSpecularMap = false;
+	float shininess = 35.0f;
+
+	//binding texture
+	if (mesh.mMaterialIndex >= 0) {
+
+		
+		auto& material = *pMaterials[mesh.mMaterialIndex];
+
+		using namespace std::string_literals;
+
+		const auto base = "asset\\model\\nano_textured\\"s;
+
+		aiString texFileName;
+		material.GetTexture(aiTextureType_DIFFUSE, 0, &texFileName);
+		bindablePtrs.push_back(std::make_unique<Bind::Texture>(gfx, Surface::FromFile(base + texFileName.C_Str())));
+		
+		if (material.GetTexture(aiTextureType_SPECULAR, 0, &texFileName) == aiReturn_SUCCESS) {
+			
+			bindablePtrs.push_back(std::make_unique<Bind::Texture>(gfx, Surface::FromFile(base + texFileName.C_Str()), 1));
+			
+			hasSpecularMap = true;
+		}
+		else {
+
+			material.Get(AI_MATKEY_SHININESS, shininess);
+		}
+
+		bindablePtrs.push_back(std::make_unique<Bind::Sampler>(gfx));
+	}
+
+
 	//binding vertex buffer
 	bindablePtrs.push_back(std::make_unique<VertexBuffer>(gfx, vbuf));
 
@@ -273,28 +308,39 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, const aiMesh& mesh) {
 	bindablePtrs.push_back(std::make_unique<IndexBuffer>(gfx, indices));
 
 	//create and bind vertex shader
-	auto pvs = std::make_unique<VertexShader>(gfx, L"PhongVS.cso");
+	auto pvs = std::make_unique<VertexShader>(gfx, L"ModelPhongVS.cso");
 	auto pvsbc = pvs->GetByteCode();
 	bindablePtrs.push_back(std::move(pvs));
-
-	//binding pixel shader
-	bindablePtrs.push_back(std::make_unique<PixelShader>(gfx, L"PhongPS.cso"));
 
 	//binding input layout
 	bindablePtrs.push_back(std::make_unique<InputLayout>(gfx, vbuf.GetLayout().GetD3DLayout(), pvsbc));
 
-	//creating material constant for pixel shader
-	struct PSMaterialConstant
-	{
-		DirectX::XMFLOAT3 color = { 0.6f,0.6f,0.8f };
-		float specularIntensity = 0.6f;
-		float specularPower = 30.0f;
-		float padding[3];
-	} pmc;
+	//binding pixel shader
+	if (hasSpecularMap) {
 
-	//binding material constant
-	bindablePtrs.push_back(std::make_unique<PixelConstantBuffer<PSMaterialConstant>>(gfx, pmc, 1u));
+		bindablePtrs.push_back(std::make_unique<Bind::PixelShader>(gfx, L"ModelPhongPSSpecMap.cso"));
 
+	}
+	else {
+
+		bindablePtrs.push_back(std::make_unique<Bind::PixelShader>(gfx, L"ModelPhongPS.cso"));
+
+		//creating material constant for pixel shader
+		struct PSMaterialConstant
+		{
+
+			float specularIntensity = 0.8f;
+			float specularPower;
+			float padding[2];
+		} pmc;
+
+		pmc.specularPower = shininess;
+
+		//binding material constant
+		bindablePtrs.push_back(std::make_unique<PixelConstantBuffer<PSMaterialConstant>>(gfx, pmc, 1u));
+	}
+
+	
 	//return a unique_ptr to mesh
 	return std::make_unique<Mesh>(gfx, std::move(bindablePtrs));
 }
@@ -338,12 +384,12 @@ void ModelWindow::Show(const char* windowName, const Node& root) noexcept
 	if (ImGui::Begin(windowName))
 	{
 		ImGui::Columns(2, nullptr, true);
-		root.ShowNodeTree(m_selectedIndex,m_pSelectedNode);
+		root.ShowNodeTree(m_pSelectedNode);
 
 		ImGui::NextColumn();
 		if (m_pSelectedNode != nullptr) {
 
-			auto& transform = transforms[*m_selectedIndex];
+			auto& transform = transforms[m_pSelectedNode->GetNodeID()];
 
 			ImGui::Text("Orientation");
 			ImGui::SliderAngle("Roll", &transform.roll, -180.0f, 180.0f);
@@ -367,7 +413,10 @@ void ModelWindow::Show(const char* windowName, const Node& root) noexcept
 
 DirectX::XMMATRIX ModelWindow::GetTransform() const noexcept
 {
-	const auto& transform = transforms.at(*m_selectedIndex);
+
+	assert(m_pSelectedNode != nullptr);
+
+	const auto& transform = transforms.at(m_pSelectedNode->GetNodeID());
 
 	return DirectX::XMMatrixRotationRollPitchYaw(
 		transform.roll, 

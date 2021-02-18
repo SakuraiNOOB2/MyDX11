@@ -62,7 +62,6 @@ class Node{
 
 	//used to allowing only model to add nodes
 	friend class Model;
-	friend class ModelWindow;
 
 public:
 
@@ -73,16 +72,12 @@ public:
 	void SetAppliedTransform(DirectX::FXMMATRIX transform) noexcept;
 	
 	int GetNodeID() const noexcept;
+	void ShowNodeTree(Node*& pSelectedNode) const noexcept;
 
 private:
 
 	//add children to the node
 	void AddChild(std::unique_ptr<Node> pChild) noexcept(!IS_DEBUG);
-
-	void ShowNodeTree(
-		std::optional<int>& 
-		selectedIndex, 
-		Node*& pSelectedNode) const noexcept;
 
 
 private:
@@ -112,7 +107,6 @@ public:
 
 private:
 
-	std::optional<int> m_selectedIndex;
 	Node* m_pSelectedNode;
 
 	struct TransformParameters
@@ -153,7 +147,7 @@ public:
 private:
 
 	//binding every mesh
-	static std::unique_ptr<Mesh> ParseMesh(Graphics& gfx, const aiMesh& mesh);
+	static std::unique_ptr<Mesh> ParseMesh(Graphics& gfx, const aiMesh& mesh, const aiMaterial* const* pMaterials);
 
 
 	std::unique_ptr<Node> ParseNode(int& nextID,const aiNode& node) noexcept;

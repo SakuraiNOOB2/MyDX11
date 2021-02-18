@@ -403,5 +403,14 @@
     <FxCompile Include="TexturedPhongVS.hlsl">
       <Filter>ヘッダー ファイル\Shader</Filter>
     </FxCompile>
+    <FxCompile Include="ModelPhongPS.hlsl">
+      <Filter>ヘッダー ファイル\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="ModelPhongVS.hlsl">
+      <Filter>ヘッダー ファイル\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="ModelPhongPSSpecMap.hlsl">
+      <Filter>ヘッダー ファイル\Shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

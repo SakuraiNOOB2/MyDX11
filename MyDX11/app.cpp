@@ -194,7 +194,12 @@ void App::DoFrame() {
 				m_wnd.DisableCursor();
 				m_wnd.mouse.EnableRaw();
 			}
+			else
+			{
 
+				m_wnd.EnableCursor();
+				m_wnd.mouse.DisableRaw();
+			}
 			break;
 
 		case VK_F1:
