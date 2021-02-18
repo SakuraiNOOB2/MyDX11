@@ -148,6 +148,23 @@ Graphics& Window::Gfx()
 	return *pGfx;
 }
 
+void Window::EnableCursor() noexcept
+{
+
+	isCursorEnabled = true;
+	ShowCursor();
+	EnableImGuiMouse();
+	FreeCursor();
+}
+
+void Window::DisableCursor() noexcept
+{
+	isCursorEnabled = false;
+	HideCursor();
+	DisableImGuiMouse();
+	ConfineCursor();
+}
+
 //Installation: Setup pointers to instances in windows 32 side
 LRESULT WINAPI Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
@@ -217,6 +234,28 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 		kbd.ClearState();
 		break;
 
+	case WM_ACTIVATE:
+
+		
+		// confine/free cursor on window to foreground/background if cursor disabled
+
+		if (!isCursorEnabled) {
+
+			if (wParam & WA_ACTIVE) {
+
+				ConfineCursor();
+				HideCursor();
+			}
+			else {
+
+				FreeCursor();
+				ShowCursor();
+			}
+
+		}
+
+		break;
+
 		//********** Keyboard Messages **********//
 
 	case WM_KEYDOWN:
@@ -250,12 +289,28 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 		//********** Mouse Messages **********//
 	case WM_MOUSEMOVE:
 	{
-		//stifle this keyboard message if imgui wants to capture 
-		if (imguiIO.WantCaptureMouse) {
+
+		const POINTS pt = MAKEPOINTS(lParam);
+
+		//cursorless setting
+		if (!isCursorEnabled){
+
+			if (!mouse.IsInWindow()){
+
+				SetCapture(hWnd);
+				mouse.OnMouseEnter();
+				HideCursor();
+			}
+
 			break;
 		}
 
-		const POINTS pt = MAKEPOINTS(lParam);
+
+		//stifle this keyboard message if imgui wants to capture 
+		if (imguiIO.WantCaptureMouse) {
+
+			break;
+		}
 
 		//in client region -> log move, and log enter + capture mouse (if not 
 		if (pt.x >= 0 && pt.x < width&&pt.y >= 0 && pt.y < height) {
@@ -296,6 +351,13 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 
 		//Bring window to foregroun on lclick client region
 		SetForegroundWindow(hWnd);
+
+		if (!isCursorEnabled)
+		{
+
+			ConfineCursor();
+			HideCursor();
+		}
 
 		//stifle this keyboard message if imgui wants to capture 
 		if (imguiIO.WantCaptureKeyboard) {
@@ -369,6 +431,46 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 
 	}
 	return DefWindowProc(hWnd, msg, wParam, lParam);
+}
+
+void Window::ConfineCursor() noexcept
+{
+	RECT rect;
+	GetClientRect(hWnd, &rect);
+
+	MapWindowPoints(hWnd, nullptr, reinterpret_cast<POINT*>(&rect), 2);
+
+	ClipCursor(&rect);
+}
+
+void Window::FreeCursor() noexcept
+{
+
+	ClipCursor(nullptr);
+}
+
+void Window::HideCursor() noexcept
+{
+
+	while (::ShowCursor(FALSE) >= 0);
+}
+
+void Window::ShowCursor() noexcept
+{
+	while (::ShowCursor(TRUE) < 0);
+}
+
+void Window::EnableImGuiMouse() noexcept
+{
+	ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
+
+}
+
+void Window::DisableImGuiMouse() noexcept
+{
+
+	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouse;
+
 }
 
 

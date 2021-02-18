@@ -84,15 +84,34 @@ public:
 	static std::optional<int> ProcessMessages() noexcept;
 	Graphics& Gfx();
 
+
+	//cursor handeling
+	void EnableCursor() noexcept;
+	void DisableCursor() noexcept;
+
 private:
 	static LRESULT CALLBACK HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 	static LRESULT CALLBACK HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 	LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 
+	//cursor handeling
+	void ConfineCursor() noexcept;
+	void FreeCursor() noexcept;
+
+	void HideCursor() noexcept;
+	void ShowCursor() noexcept;
+
+	//imgui mouse handeling
+	void EnableImGuiMouse() noexcept;
+	void DisableImGuiMouse() noexcept;
+
 public:
 	Keyboard kbd;
 	Mouse mouse;
 private:
+
+	bool isCursorEnabled = true;
+
 	int width;
 	int height;
 	HWND hWnd;
