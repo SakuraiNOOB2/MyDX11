@@ -204,6 +204,7 @@ void App::DoFrame() {
 
 		case VK_F1:
 
+			
 
 			break;
 
@@ -234,8 +235,11 @@ void App::DoFrame() {
 
 			break;
 		}
+		
+	}
 
-		if (!m_wnd.GetCursorEnabled()) {
+
+	if (!m_wnd.GetCursorEnabled()) {
 
 			if (m_wnd.kbd.KeyIsPressed('W')){
 
@@ -264,19 +268,16 @@ void App::DoFrame() {
 				m_camera.Translate({ 0.0f,-dt,0.0f });
 			}
 
-		}
-
-		while (const auto delta = m_wnd.mouse.ReadRawDelta()) {
-
-			if (!m_wnd.GetCursorEnabled()) {
-
-				m_camera.Rotate((float)delta->x,(float)delta->y);
-			}
-
-		}
-		
 	}
 
+	while (const auto delta = m_wnd.mouse.ReadRawDelta()) {
+
+		if (!m_wnd.GetCursorEnabled()) {
+
+			m_camera.Rotate((float)delta->x, (float)delta->y);
+		}
+
+	}
 
 	/// <summary>
 	/// imgui stuff
