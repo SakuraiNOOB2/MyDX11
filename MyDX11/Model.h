@@ -66,18 +66,20 @@ class Node{
 
 public:
 
-	Node(const std::string& name, std::vector<Mesh*> meshPtrs, const DirectX::XMMATRIX& m_transform) noexcept(!IS_DEBUG);
+	Node(int id, const std::string& name, std::vector<Mesh*> meshPtrs, const DirectX::XMMATRIX& m_transform) noexcept(!IS_DEBUG);
 
 	void Draw(Graphics& gfx, DirectX::FXMMATRIX accumulatedTransform) const noexcept(!IS_DEBUG);
 
 	void SetAppliedTransform(DirectX::FXMMATRIX transform) noexcept;
 	
+	int GetNodeID() const noexcept;
+
 private:
 
 	//add children to the node
 	void AddChild(std::unique_ptr<Node> pChild) noexcept(!IS_DEBUG);
 
-	void ShowNodeTree(int& nodeIndexTracked,
+	void ShowNodeTree(
 		std::optional<int>& 
 		selectedIndex, 
 		Node*& pSelectedNode) const noexcept;
@@ -86,6 +88,8 @@ private:
 private:
 
 	std::string m_name;
+	int m_nodeID;
+
 
 	std::vector<std::unique_ptr<Node>> childPtrs;	//children pointers
 	std::vector<Mesh*> meshPtrs;		//mesh pointer
@@ -152,7 +156,7 @@ private:
 	static std::unique_ptr<Mesh> ParseMesh(Graphics& gfx, const aiMesh& mesh);
 
 
-	std::unique_ptr<Node> ParseNode(const aiNode& node) noexcept;
+	std::unique_ptr<Node> ParseNode(int& nextID,const aiNode& node) noexcept;
 	
 private:
 
