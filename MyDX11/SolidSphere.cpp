@@ -8,59 +8,52 @@ SolidSphere::SolidSphere(Graphics& gfx, float radius)
 {
 	using namespace Bind;
 
-	if (!IsStaticInitialized()) {
+	struct Vertex {
 
-		struct Vertex {
+		DirectX::XMFLOAT3 pos;
 
-			DirectX::XMFLOAT3 pos;
+	};
 
-		};
+	auto model = Sphere::Make<Vertex>();
+	model.Transform(DirectX::XMMatrixScaling(radius, radius, radius));
 
-		auto model = Sphere::Make<Vertex>();
-		model.Transform(DirectX::XMMatrixScaling(radius, radius, radius));
+	//Bind vertex buffer
+	AddBind(std::make_shared<VertexBuffer>(gfx, model.vertices));
+	
+	//Bind index buffer
+	AddBind(std::make_shared<IndexBuffer>(gfx, model.indices));
 
-		//Bind vertex buffer
-		AddBind(std::make_unique<VertexBuffer>(gfx, model.vertices));
-		
-		//Bind index buffer
-		AddIndexBuffer(std::make_unique<IndexBuffer>(gfx, model.indices));
+	//Bind static vertex shader
+	auto pvs = std::make_shared<VertexShader>(gfx, L"SolidVS.cso");
+	auto pvsbc = pvs->GetByteCode();
+	AddBind(std::move(pvs));
 
-		//Bind static vertex shader
-		auto pvs = std::make_unique<VertexShader>(gfx, L"SolidVS.cso");
-		auto pvsbc = pvs->GetByteCode();
-		AddStaticBind(std::move(pvs));
+	//Bind static pixel shader
+	AddBind(std::make_shared<PixelShader>(gfx, L"SolidPS.cso"));
 
-		//Bind static pixel shader
-		AddStaticBind(std::make_unique<PixelShader>(gfx, L"SolidPS.cso"));
+	//Creatre constant Buffer
+	struct PSColorConstant {
+		DirectX::XMFLOAT3 color = { 1.0f,1.0f,1.0f };
+		float padding;
+	}colorConst;
 
-		//Creatre constant Buffer
-		struct PSColorConstant {
-			DirectX::XMFLOAT3 color = { 1.0f,1.0f,1.0f };
-			float padding;
-		}colorConst;
+	//Bind static constant buffer
+	AddBind(std::make_shared<PixelConstantBuffer<PSColorConstant>>(gfx, colorConst));
 
-		//Bind static constant buffer
-		AddStaticBind(std::make_unique<PixelConstantBuffer<PSColorConstant>>(gfx, colorConst));
+	//Create input layout
+	const std::vector<D3D11_INPUT_ELEMENT_DESC> ied = {
+		{"Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0},
 
-		//Create input layout
-		const std::vector<D3D11_INPUT_ELEMENT_DESC> ied = {
-			{"Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0},
+	};
 
-		};
+	//Bind static input layout
+	AddBind(std::make_shared<InputLayout>(gfx, ied, pvsbc));
 
-		//Bind static input layout
-		AddStaticBind(std::make_unique<InputLayout>(gfx, ied, pvsbc));
+	//Bind static topology
+	AddBind(std::make_shared<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
 
-		//Bind static topology
-		AddStaticBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
 
-	}
-	else {
-
-		SetIndexFromStatic();
-	}
-
-	AddBind(std::make_unique<TransformCbuf>(gfx, *this));
+	AddBind(std::make_shared<TransformCbuf>(gfx, *this));
 
 }
 

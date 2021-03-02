@@ -6,7 +6,7 @@
 using namespace Bind;
 
 //Drawable Base templated on Box
-class Box :public TestObject<Box> {
+class Box :public TestObject {
 
 public:
 

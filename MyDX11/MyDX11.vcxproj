@@ -221,7 +221,6 @@
     <ClInclude Include="Cube.h" />
     <ClInclude Include="Cylinder.h" />
     <ClInclude Include="Drawable.h" />
-    <ClInclude Include="DrawableBase.h" />
     <ClInclude Include="dxerr.h" />
     <ClInclude Include="dxgiInfoManager.h" />
     <ClInclude Include="GDIPlusManager.h" />

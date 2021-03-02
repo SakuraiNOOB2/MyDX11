@@ -2,7 +2,7 @@
 
 #include "TestObjects.h"
 
-class SkinnedBox:public TestObject<SkinnedBox>
+class SkinnedBox:public TestObject
 {
 
 public:

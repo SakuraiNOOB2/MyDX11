@@ -45,33 +45,18 @@ const std::string& ModelException::GetNote() const noexcept
 /// </summary>
 
 //constructor
-Mesh::Mesh(Graphics& gfx, std::vector<std::unique_ptr<Bindable>> bindPtrs) {
+Mesh::Mesh(Graphics& gfx, std::vector<std::shared_ptr<Bindable>> bindPtrs) {
 
-	if (!IsStaticInitialized()) {
+	
+	//assume all mesh are in trianglelist
+	AddBind(std::make_shared<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
 
-		//assume all mesh are in trianglelist
-		AddStaticBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
-	}
-
-	//checking indexbuffer around bindables 
 	for (auto& pb : bindPtrs) {
 
-		//updating indexbuffer in the memory
-		if (auto pi = dynamic_cast<IndexBuffer*>(pb.get())) {
-
-			//constructing new index buffer pointer
-			AddIndexBuffer(std::unique_ptr<IndexBuffer>{ pi });
-
-			//release memory from origin indexbuffer pointer
-			pb.release();
-		}
-		else {
-
-			AddBind(std::move(pb));
-		}
+		AddBind(std::move(pb));
 	}
 
-	AddBind(std::make_unique<TransformCbuf>(gfx, *this));
+	AddBind(std::make_shared<TransformCbuf>(gfx, *this));
 }
 
 void Mesh::Draw(Graphics& gfx, DirectX::FXMMATRIX accumulatedTransform) const noexcept(!IS_DEBUG) {
@@ -267,7 +252,7 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, const aiMesh& mesh, const 
 		indices.push_back(face.mIndices[2]);
 	}
 
-	std::vector<std::unique_ptr<Bindable>> bindablePtrs;
+	std::vector<std::shared_ptr<Bindable>> bindablePtrs;
 
 	bool hasSpecularMap = false;
 	float shininess = 35.0f;
@@ -284,11 +269,11 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, const aiMesh& mesh, const 
 
 		aiString texFileName;
 		material.GetTexture(aiTextureType_DIFFUSE, 0, &texFileName);
-		bindablePtrs.push_back(std::make_unique<Bind::Texture>(gfx, Surface::FromFile(base + texFileName.C_Str())));
+		bindablePtrs.push_back(std::make_shared<Bind::Texture>(gfx, Surface::FromFile(base + texFileName.C_Str())));
 		
 		if (material.GetTexture(aiTextureType_SPECULAR, 0, &texFileName) == aiReturn_SUCCESS) {
 			
-			bindablePtrs.push_back(std::make_unique<Bind::Texture>(gfx, Surface::FromFile(base + texFileName.C_Str()), 1));
+			bindablePtrs.push_back(std::make_shared<Bind::Texture>(gfx, Surface::FromFile(base + texFileName.C_Str()), 1));
 			
 			hasSpecularMap = true;
 		}
@@ -297,33 +282,33 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, const aiMesh& mesh, const 
 			material.Get(AI_MATKEY_SHININESS, shininess);
 		}
 
-		bindablePtrs.push_back(std::make_unique<Bind::Sampler>(gfx));
+		bindablePtrs.push_back(std::make_shared<Bind::Sampler>(gfx));
 	}
 
 
 	//binding vertex buffer
-	bindablePtrs.push_back(std::make_unique<VertexBuffer>(gfx, vbuf));
+	bindablePtrs.push_back(std::make_shared<VertexBuffer>(gfx, vbuf));
 
 	//binding index buffer
-	bindablePtrs.push_back(std::make_unique<IndexBuffer>(gfx, indices));
+	bindablePtrs.push_back(std::make_shared<IndexBuffer>(gfx, indices));
 
 	//create and bind vertex shader
-	auto pvs = std::make_unique<VertexShader>(gfx, L"ModelPhongVS.cso");
+	auto pvs = std::make_shared<VertexShader>(gfx, L"ModelPhongVS.cso");
 	auto pvsbc = pvs->GetByteCode();
 	bindablePtrs.push_back(std::move(pvs));
 
 	//binding input layout
-	bindablePtrs.push_back(std::make_unique<InputLayout>(gfx, vbuf.GetLayout().GetD3DLayout(), pvsbc));
+	bindablePtrs.push_back(std::make_shared<InputLayout>(gfx, vbuf.GetLayout().GetD3DLayout(), pvsbc));
 
 	//binding pixel shader
 	if (hasSpecularMap) {
 
-		bindablePtrs.push_back(std::make_unique<Bind::PixelShader>(gfx, L"ModelPhongPSSpecMap.cso"));
+		bindablePtrs.push_back(std::make_shared<Bind::PixelShader>(gfx, L"ModelPhongPSSpecMap.cso"));
 
 	}
 	else {
 
-		bindablePtrs.push_back(std::make_unique<Bind::PixelShader>(gfx, L"ModelPhongPS.cso"));
+		bindablePtrs.push_back(std::make_shared<Bind::PixelShader>(gfx, L"ModelPhongPS.cso"));
 
 		//creating material constant for pixel shader
 		struct PSMaterialConstant
@@ -337,7 +322,7 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, const aiMesh& mesh, const 
 		pmc.specularPower = shininess;
 
 		//binding material constant
-		bindablePtrs.push_back(std::make_unique<PixelConstantBuffer<PSMaterialConstant>>(gfx, pmc, 1u));
+		bindablePtrs.push_back(std::make_shared<PixelConstantBuffer<PSMaterialConstant>>(gfx, pmc, 1u));
 	}
 
 	

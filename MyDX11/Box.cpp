@@ -25,62 +25,54 @@ Box::Box(Graphics& gfx,
 {
 	using namespace Bind;
 
-	//check this class is statically initialized or not 
-	if (!IsStaticInitialized()) {
+	//Initialization for the buffers
 
-		//**Static Initialization for the buffers
+	//Create Vertex
+	struct Vertex {
 
-		//Create Vertex
-		struct Vertex {
+		DirectX::XMFLOAT3 pos;
+		DirectX::XMFLOAT3 n;
+	};
 
-			DirectX::XMFLOAT3 pos;
-			DirectX::XMFLOAT3 n;
-		};
+	auto model = Cube::MakeIndependent<Vertex>();
+	model.SetNormalsIndependentFlat();
 
-		auto model = Cube::MakeIndependent<Vertex>();
-		model.SetNormalsIndependentFlat();
+	//Bind Vertex Buffer
+	AddBind(std::make_shared<VertexBuffer>(gfx, model.vertices));
 
-		//Bind static Vertex Buffer
-		AddStaticBind(std::make_unique<VertexBuffer>(gfx, model.vertices));
+	//Bind Vertex Shader
+	auto pvs = std::make_shared<VertexShader>(gfx, L"PhongVS.cso");
+	auto pvsbc = pvs->GetByteCode();
+	AddBind(std::move(pvs));
 
-		//Bind static Vertex Shader
-		auto pvs = std::make_unique<VertexShader>(gfx, L"PhongVS.cso");
-		auto pvsbc = pvs->GetByteCode();
-		AddStaticBind(std::move(pvs));
+	//Bind Pixel Shader
+	AddBind(std::make_shared<PixelShader>(gfx, L"PhongPS.cso"));
 
-		//Bind static Pixel Shader
-		AddStaticBind(std::make_unique<PixelShader>(gfx, L"PhongPS.cso"));
+	//Bind Index Buffer
+	AddBind(std::make_shared<IndexBuffer>(gfx, model.indices));
 
-		//Bind static Index Buffer
-		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, model.indices));
+	//Create Input Layout
+	const std::vector<D3D11_INPUT_ELEMENT_DESC> ied = {
 
-		//Create static Input Layout
-		const std::vector<D3D11_INPUT_ELEMENT_DESC> ied = {
+		{"Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0},
+		{"Normal",0,DXGI_FORMAT_R32G32B32_FLOAT,0,12,D3D11_INPUT_PER_VERTEX_DATA,0},
+	};
 
-			{"Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0},
-			{"Normal",0,DXGI_FORMAT_R32G32B32_FLOAT,0,12,D3D11_INPUT_PER_VERTEX_DATA,0},
-		};
+	//Bind Input Layout to the pipeline
+	AddBind(std::make_shared<InputLayout>(gfx, ied, pvsbc));
 
-		//Bind static Input Layout to the pipeline
-		AddStaticBind(std::make_unique<InputLayout>(gfx, ied, pvsbc));
-
-		//Bind static Topology
-		AddStaticBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
-	}
-	else {
-
-		//Set/Update indexBuffer pointer/reference to from static
-		SetIndexFromStatic();
-	}
+	//Bind Topology
+	AddBind(std::make_shared<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
 
 
-	//Bind not static bindable Transform Constant Buffer pipeline
-	//*** Not static bindables because every boxes has its own transform
-	AddBind(std::make_unique<TransformCbuf>(gfx, *this));
+
+
+	//Bind Transform Constant Buffer pipeline
+	AddBind(std::make_shared<TransformCbuf>(gfx, *this));
 
 	//PS material constants
 	materialConstants.color = material;
-	AddBind(std::make_unique<MaterialCbuf>(gfx, materialConstants, 1u));
+	AddBind(std::make_shared<MaterialCbuf>(gfx, materialConstants, 1u));
 
 	//model deformation transform(per instance,not stored as bind)
 	DirectX::XMStoreFloat3x3(&mt, DirectX::XMMatrixScaling(1.0f, 1.0f, bdist(rng)));

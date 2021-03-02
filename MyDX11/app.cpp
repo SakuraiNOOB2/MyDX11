@@ -14,10 +14,8 @@
 
 GDIPlusManager gdipm;
 
-#define windowLenth (1024)
-#define windowWidth (768)
-
-
+#define windowLenth (1600)
+#define windowWidth (900)
 
 
 App::App()

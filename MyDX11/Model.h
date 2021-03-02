@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DrawableBase.h"
+#include "Drawable.h"
 #include "BindableBase.h"
 #include "Vertex.h"
 #include <optional>
@@ -35,13 +35,13 @@ private:
 /// <summary>
 /// Mesh class
 /// </summary>
-class Mesh : public DrawableBase<Mesh>
+class Mesh : public Drawable
 {
 
 public:
 
 	//constructor
-	Mesh(Graphics& gfx, std::vector<std::unique_ptr<Bindable>> bindPtrs);
+	Mesh(Graphics& gfx, std::vector<std::shared_ptr<Bindable>> bindPtrs);
 
 	//draw function
 	void Draw(Graphics& gfx, DirectX::FXMMATRIX accumulatedTransform) const noexcept(!IS_DEBUG);

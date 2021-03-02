@@ -2,6 +2,7 @@
 
 #include "graphics.h"
 #include <DirectXMath.h>
+#include <memory>
 
 namespace Bind {
 
@@ -12,9 +13,6 @@ namespace Bind {
 
 class Drawable {
 
-	//Make DrawableBase a friend class of Drawable for private access
-	template<class T>
-	friend class DrawableBase;
 
 public:
 
@@ -50,18 +48,12 @@ protected:
 	}
 
 	//Adding Bindables and IndexBuffer
-	void AddBind(std::unique_ptr<Bind::Bindable> bind) noexcept(!IS_DEBUG);
-	void AddIndexBuffer(std::unique_ptr<Bind::IndexBuffer> ibuf) noexcept(!IS_DEBUG);
-
-private:
-
-	//Bridge for Drawable class to access the staticBinds going to be declare by its children
-	virtual const std::vector<std::unique_ptr<Bind::Bindable>>& GetStaticBinds() const noexcept = 0;
+	void AddBind(std::shared_ptr<Bind::Bindable> bind) noexcept(!IS_DEBUG);
 
 private:
 
 	//special pointer to the transformation constant buffer
 	const class Bind::IndexBuffer* pIndexBuffer = nullptr;
-	std::vector<std::unique_ptr<Bind::Bindable>> binds;
+	std::vector<std::shared_ptr<Bind::Bindable>> binds;
 	
 };

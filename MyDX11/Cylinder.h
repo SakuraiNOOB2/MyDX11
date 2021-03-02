@@ -2,7 +2,7 @@
 
 #include "TestObjects.h"
 
-class Cylinder :public TestObject<Cylinder> {
+class Cylinder :public TestObject {
 
 public:
 

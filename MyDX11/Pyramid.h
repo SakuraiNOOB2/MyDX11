@@ -2,7 +2,7 @@
 
 #include "TestObjects.h"
 
-class Pyramid:public TestObject<Pyramid>
+class Pyramid:public TestObject
 {
 public:
 

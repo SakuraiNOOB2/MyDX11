@@ -1,10 +1,9 @@
 #pragma once
 
-#include "DrawableBase.h"
+#include "Drawable.h"
 #include "myMath.h"
 
-template<class T>
-class TestObject :public DrawableBase<T> {
+class TestObject :public Drawable {
 
 public:
 

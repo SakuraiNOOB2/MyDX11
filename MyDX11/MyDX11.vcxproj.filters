@@ -248,9 +248,6 @@
     <ClInclude Include="TransformCbuf.h">
       <Filter>ヘッダー ファイル\Bindable</Filter>
     </ClInclude>
-    <ClInclude Include="DrawableBase.h">
-      <Filter>ヘッダー ファイル\Drawable</Filter>
-    </ClInclude>
     <ClInclude Include="IndexedTriangleList.h">
       <Filter>ヘッダー ファイル\Geometry</Filter>
     </ClInclude>

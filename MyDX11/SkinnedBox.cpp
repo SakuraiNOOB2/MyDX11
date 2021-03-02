@@ -18,57 +18,51 @@ SkinnedBox::SkinnedBox(Graphics& gfx,
 
 	using namespace Bind;
 
-	if (!IsStaticInitialized()) {
 
-		struct Vertex {
+	struct Vertex {
 
-			DirectX::XMFLOAT3 pos;
-			DirectX::XMFLOAT3 n;
-			DirectX::XMFLOAT2 tc;
-		};
+		DirectX::XMFLOAT3 pos;
+		DirectX::XMFLOAT3 n;
+		DirectX::XMFLOAT2 tc;
+	};
 
-		auto model = Cube::MakeIndependentTextured<Vertex>();
-		model.SetNormalsIndependentFlat();
+	auto model = Cube::MakeIndependentTextured<Vertex>();
+	model.SetNormalsIndependentFlat();
 
-		AddStaticBind(std::make_unique<VertexBuffer>(gfx, model.vertices));
+	AddBind(std::make_shared<VertexBuffer>(gfx, model.vertices));
 
-		AddStaticBind(std::make_unique<Texture>(gfx, Surface::FromFile("asset\\texture\\stonk.jpg")));
+	AddBind(std::make_shared<Texture>(gfx, Surface::FromFile("asset\\texture\\stonk.jpg")));
 
-		AddStaticBind(std::make_unique<Sampler>(gfx));
+	AddBind(std::make_shared<Sampler>(gfx));
 
-		auto pvs = std::make_unique<VertexShader>(gfx, L"TexturedPhongVS.cso");
-		auto pvsbc = pvs->GetByteCode();
-		AddStaticBind(std::move(pvs));
+	auto pvs = std::make_shared<VertexShader>(gfx, L"TexturedPhongVS.cso");
+	auto pvsbc = pvs->GetByteCode();
+	AddBind(std::move(pvs));
 
-		AddStaticBind(std::make_unique<PixelShader>(gfx, L"TexturedPhongPS.cso"));
+	AddBind(std::make_shared<PixelShader>(gfx, L"TexturedPhongPS.cso"));
 
-		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, model.indices));
+	AddBind(std::make_shared<IndexBuffer>(gfx, model.indices));
 
-		const std::vector<D3D11_INPUT_ELEMENT_DESC> ied = {
-			{"Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0},
-			{"Normal",0,DXGI_FORMAT_R32G32B32_FLOAT,0,12,D3D11_INPUT_PER_VERTEX_DATA,0},
-			{"TexCoord",0,DXGI_FORMAT_R32G32_FLOAT,0,24,D3D11_INPUT_PER_VERTEX_DATA,0},
-		
-		};
+	const std::vector<D3D11_INPUT_ELEMENT_DESC> ied = {
+		{"Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0},
+		{"Normal",0,DXGI_FORMAT_R32G32B32_FLOAT,0,12,D3D11_INPUT_PER_VERTEX_DATA,0},
+		{"TexCoord",0,DXGI_FORMAT_R32G32_FLOAT,0,24,D3D11_INPUT_PER_VERTEX_DATA,0},
+	
+	};
 
-		AddStaticBind(std::make_unique<InputLayout>(gfx, ied, pvsbc));
+	AddBind(std::make_shared<InputLayout>(gfx, ied, pvsbc));
 
-		AddStaticBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
+	AddBind(std::make_shared<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
 
-		struct PSMaterialConstant {
+	struct PSMaterialConstant {
 
-			float specularIntensity = 0.6f;
-			float specularPower = 30.0f;
-			float padding[2];
-		}colorConst;
+		float specularIntensity = 0.6f;
+		float specularPower = 30.0f;
+		float padding[2];
+	}colorConst;
 
-		AddStaticBind(std::make_unique<PixelConstantBuffer<PSMaterialConstant>>(gfx, colorConst, 1u));
+	AddBind(std::make_shared<PixelConstantBuffer<PSMaterialConstant>>(gfx, colorConst, 1u));
 
-	}
-	else {
 
-		SetIndexFromStatic();
-	}
-
-	AddBind(std::make_unique<TransformCbuf>(gfx, *this));
+	AddBind(std::make_shared<TransformCbuf>(gfx, *this));
 }

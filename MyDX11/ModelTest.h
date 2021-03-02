@@ -3,7 +3,7 @@
 #include "TestObjects.h"
 #include "ConstantBuffers.h"
 
-class ModelTest:public TestObject<ModelTest>
+class ModelTest:public TestObject
 {
 
 public:

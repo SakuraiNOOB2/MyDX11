@@ -16,37 +16,35 @@ Pyramid::Pyramid(Graphics& gfx,
 
 	using namespace Bind;
 
-	if (!IsStaticInitialized()) {
 
-		
-		auto pvs = std::make_unique<VertexShader>(gfx, L"BlendedPhongVS.cso");
-		auto pvsbc = pvs->GetByteCode();
-		AddStaticBind(std::move(pvs));
-		
-		AddStaticBind(std::make_unique<PixelShader>(gfx, L"BlendedPhongPS.cso"));
+	auto pvs = std::make_unique<VertexShader>(gfx, L"BlendedPhongVS.cso");
+	auto pvsbc = pvs->GetByteCode();
+	AddBind(std::move(pvs));
+	
+	AddBind(std::make_shared<PixelShader>(gfx, L"BlendedPhongPS.cso"));
 
-		
-		const std::vector<D3D11_INPUT_ELEMENT_DESC> ied = {
-			{"Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0},
-			{"Normal",0,DXGI_FORMAT_R32G32B32A32_FLOAT,0,12,D3D11_INPUT_PER_VERTEX_DATA,0},
-			{"Color",0,DXGI_FORMAT_R8G8B8A8_UNORM,0,24,D3D11_INPUT_PER_VERTEX_DATA,0},
+	
+	const std::vector<D3D11_INPUT_ELEMENT_DESC> ied = {
+		{"Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0},
+		{"Normal",0,DXGI_FORMAT_R32G32B32A32_FLOAT,0,12,D3D11_INPUT_PER_VERTEX_DATA,0},
+		{"Color",0,DXGI_FORMAT_R8G8B8A8_UNORM,0,24,D3D11_INPUT_PER_VERTEX_DATA,0},
 
-		};
+	};
 
-		AddStaticBind(std::make_unique<InputLayout>(gfx, ied, pvsbc));
+	AddBind(std::make_shared<InputLayout>(gfx, ied, pvsbc));
 
-		AddStaticBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
+	AddBind(std::make_shared<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
 
-		struct PSMaterialConstant {
+	struct PSMaterialConstant {
 
-			float specularIntensity = 0.6f;
-			float specularPower = 30.0f;
-			float padding[2];
-		}colorConst;
+		float specularIntensity = 0.6f;
+		float specularPower = 30.0f;
+		float padding[2];
+	}colorConst;
 
-		AddStaticBind(std::make_unique<PixelConstantBuffer<PSMaterialConstant>>(gfx, colorConst, 1u));
+	AddBind(std::make_shared<PixelConstantBuffer<PSMaterialConstant>>(gfx, colorConst, 1u));
 
-	}
+
 
 	struct Vertex {
 
@@ -76,10 +74,10 @@ Pyramid::Pyramid(Graphics& gfx,
 	//add normals
 	model.SetNormalsIndependentFlat();
 
-	AddBind(std::make_unique<VertexBuffer>(gfx, model.vertices));
+	AddBind(std::make_shared<VertexBuffer>(gfx, model.vertices));
 
-	AddIndexBuffer(std::make_unique<IndexBuffer>(gfx, model.indices));
+	AddBind(std::make_shared<IndexBuffer>(gfx, model.indices));
 
 
-	AddBind(std::make_unique<TransformCbuf>(gfx, *this));
+	AddBind(std::make_shared<TransformCbuf>(gfx, *this));
 }
