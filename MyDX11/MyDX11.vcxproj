@@ -194,6 +194,7 @@
     <ClCompile Include="mouse.cpp" />
     <ClCompile Include="myException.cpp" />
     <ClCompile Include="myTimer.cpp" />
+    <ClCompile Include="NewVertexShader.cpp" />
     <ClCompile Include="PixelShader.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Pyramid.cpp" />
@@ -246,6 +247,8 @@
     <ClInclude Include="myMath.h" />
     <ClInclude Include="myTimer.h" />
     <ClInclude Include="myWin.h" />
+    <ClInclude Include="NewIndexTriangleList.h" />
+    <ClInclude Include="NewVertexShader.h" />
     <ClInclude Include="PixelShader.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="PointLight.h" />

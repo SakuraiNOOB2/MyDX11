@@ -1,6 +1,7 @@
 #include "SolidSphere.h"
 #include "BindableBase.h"
 #include "GraphicsThrowMacros.h"
+#include "Vertex.h"
 #include "Sphere.h"
 
 
@@ -8,13 +9,8 @@ SolidSphere::SolidSphere(Graphics& gfx, float radius)
 {
 	using namespace Bind;
 
-	struct Vertex {
 
-		DirectX::XMFLOAT3 pos;
-
-	};
-
-	auto model = Sphere::Make<Vertex>();
+	auto model = Sphere::Make();
 	model.Transform(DirectX::XMMatrixScaling(radius, radius, radius));
 
 	//Bind vertex buffer
@@ -40,14 +36,8 @@ SolidSphere::SolidSphere(Graphics& gfx, float radius)
 	//Bind static constant buffer
 	AddBind(std::make_shared<PixelConstantBuffer<PSColorConstant>>(gfx, colorConst));
 
-	//Create input layout
-	const std::vector<D3D11_INPUT_ELEMENT_DESC> ied = {
-		{"Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0},
-
-	};
-
 	//Bind static input layout
-	AddBind(std::make_shared<InputLayout>(gfx, ied, pvsbc));
+	AddBind(std::make_shared<InputLayout>(gfx, model.vertices.GetLayout().GetD3DLayout(), pvsbc));
 
 	//Bind static topology
 	AddBind(std::make_shared<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));

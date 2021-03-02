@@ -1,6 +1,8 @@
 #pragma once
 
-#include "IndexedTriangleList.h"
+#include <optional>
+#include "Vertex.h"
+#include "NewIndexedTriangleList.h"
 #include <DirectXMath.h>
 #include "myMath.h"
 
@@ -9,8 +11,7 @@ class Sphere {
 
 public:
 
-	template<class V>
-	static IndexedTriangleList<V> MakeTesselated(int latDiv,int longDiv) {
+	static NewIndexedTriangleList MakeTesselated(MyDynamicVertex::VertexLayout layout, int latDiv,int longDiv) {
 
 		assert(latDiv >= 3);
 		assert(longDiv >= 3);
@@ -20,7 +21,7 @@ public:
 		const float lattitudeAngle = PI / latDiv;
 		const float longtitudeAngle = 2.0f * PI / longDiv;
 
-		std::vector<V> vertices;
+		MyDynamicVertex::VertexBuffer vertices{ std::move(layout) };
 
 		for (int iLat = 1;iLat < latDiv; iLat++) {
 
@@ -31,27 +32,40 @@ public:
 
 			for (int iLong = 0; iLong < longDiv; iLong++) {
 
-				vertices.emplace_back();
+				DirectX::XMFLOAT3 calculatedPos;
 
 				auto v = DirectX::XMVector3Transform(
 					latBase,
 					DirectX::XMMatrixRotationZ(longtitudeAngle * iLong)
 				);
 
-				DirectX::XMStoreFloat3(&vertices.back().pos, v);
+				DirectX::XMStoreFloat3(&calculatedPos, v);
+
+				vertices.EmplaceBack(calculatedPos);
 			}
 
 
 		}
 
 		//add the cap vertices
-		const auto iNorthPole = (unsigned short)vertices.size();
-		vertices.emplace_back();
-		DirectX::XMStoreFloat3(&vertices.back().pos, base);
+		const auto iNorthPole = (unsigned short)vertices.Size();
+		{
+			DirectX::XMFLOAT3 northPos;
 
-		const auto iSouthPole = (unsigned short)vertices.size();
-		vertices.emplace_back();
-		DirectX::XMStoreFloat3(&vertices.back().pos, DirectX::XMVectorNegate(base));
+			DirectX::XMStoreFloat3(&northPos, base);
+
+			vertices.EmplaceBack(northPos);
+		}
+		
+		const auto iSouthPole = (unsigned short)vertices.Size();
+		{
+			DirectX::XMFLOAT3 southPos;
+
+			DirectX::XMStoreFloat3(&southPos, base);
+
+			vertices.EmplaceBack(southPos);
+		}
+
 
 		const auto calcIdx = [latDiv, longDiv](unsigned short iLat, unsigned short iLong) {
 
@@ -115,10 +129,16 @@ public:
 
 	}
 	
-	template<class V>
-	static IndexedTriangleList<V> Make() {
+	static NewIndexedTriangleList Make(std::optional<MyDynamicVertex::VertexLayout> layout = std::nullopt) {
 
-		return MakeTesselated<V>(14, 24);
+		using Element = MyDynamicVertex::VertexLayout::ElementType;
+
+		if (!layout) {
+
+			layout = MyDynamicVertex::VertexLayout{}.Append(Element::Position3D);
+		}
+
+		return MakeTesselated(std::move(*layout), 12, 24);
 	}
 
 };

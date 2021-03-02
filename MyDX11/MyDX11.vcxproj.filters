@@ -168,6 +168,9 @@
     <ClCompile Include="Model.cpp">
       <Filter>ソース ファイル\Model</Filter>
     </ClCompile>
+    <ClCompile Include="NewVertexShader.cpp">
+      <Filter>ソース ファイル\Bindable</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsMessageMap.h">
@@ -337,6 +340,12 @@
     </ClInclude>
     <ClInclude Include="Model.h">
       <Filter>ヘッダー ファイル\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="NewIndexTriangleList.h">
+      <Filter>ヘッダー ファイル\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="NewVertexShader.h">
+      <Filter>ヘッダー ファイル\Bindable</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
